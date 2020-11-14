@@ -7,6 +7,23 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// Logger common interface for logger
+type Logger interface {
+	Debug(...interface{})
+	Debugf(string, ...interface{})
+	Info(...interface{})
+	Infof(string, ...interface{})
+	Warn(...interface{})
+	Warnf(string, ...interface{})
+	Error(...interface{})
+	Errorf(string, ...interface{})
+	Fatal(...interface{})
+	Fatalf(string, ...interface{})
+	Panic(...interface{})
+	Panicf(string, ...interface{})
+	With(...interface{}) *zap.SugaredLogger
+}
+
 // New - Инициализируем инстанс логгера
 func New(l string) *zap.Logger {
 
@@ -44,7 +61,7 @@ func New(l string) *zap.Logger {
 }
 
 // DefaultLogger ...
-func DefaultLogger(level, ms string) *zap.SugaredLogger {
+func DefaultLogger(level, ms string) Logger {
 	if level == "" {
 		level = "info"
 	}
