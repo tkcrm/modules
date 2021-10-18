@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-// Logger common interface for logger
+// Logger common interface
 type Logger interface {
 	Debug(...interface{})
 	Debugf(string, ...interface{})
@@ -24,7 +24,7 @@ type Logger interface {
 	With(...interface{}) *zap.SugaredLogger
 }
 
-// New - Инициализируем инстанс логгера
+// New ...
 func New(l string) *zap.Logger {
 
 	atom := zap.NewAtomicLevel()
@@ -61,11 +61,11 @@ func New(l string) *zap.Logger {
 }
 
 // DefaultLogger ...
-func DefaultLogger(level, ms string) Logger {
+func DefaultLogger(level, microservice string) Logger {
 	if level == "" {
 		level = "info"
 	}
 	return New(level).With(
-		zap.String("ms", ms),
+		zap.String("ms", microservice),
 	).Sugar()
 }

@@ -8,7 +8,7 @@ import (
 )
 
 // GetNATSOpts return default NATS options for all microservices
-func GetNATSOpts(l logger.Logger, appName, user, pass string) []nats.Option {
+func GetNATSOpts(l logger.Logger, appName, user, pass, token string) []nats.Option {
 	opts := []nats.Option{
 		nats.Name(appName),
 		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
@@ -20,12 +20,15 @@ func GetNATSOpts(l logger.Logger, appName, user, pass string) []nats.Option {
 		nats.ClosedHandler(func(nc *nats.Conn) {
 			l.Errorf("Nats connection closed. Reason: %q", nc.LastError())
 		}),
-		// Отрицательное значение означает бесконечное количество попыток
 		nats.MaxReconnects(-1),
 	}
 
 	if user != "" && pass != "" {
 		opts = append(opts, nats.UserInfo(user, pass))
+	}
+
+	if token != "" {
+		opts = append(opts, nats.Token(token))
 	}
 
 	return opts
