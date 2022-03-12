@@ -1,6 +1,5 @@
 package utils
 
-// GetDefaultString ...
 func GetDefaultString(v, d string) string {
 	if v == "" {
 		v = d
@@ -8,18 +7,9 @@ func GetDefaultString(v, d string) string {
 	return v
 }
 
-// GetDefaultInt ...
-func GetDefaultInt(v, d int) int {
-	if v == 0 {
-		v = d
+func GetDefaultNumber[T Number](value, defaultValue T) T {
+	if value == 0 {
+		return defaultValue
 	}
-	return v
-}
-
-// GetDefaultInt32 ...
-func GetDefaultInt32(v, d int32) int32 {
-	if v == 0 {
-		v = d
-	}
-	return v
+	return value
 }

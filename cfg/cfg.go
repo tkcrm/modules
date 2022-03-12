@@ -39,8 +39,8 @@ func GetNATSURL(host, port string) string {
 	return fmt.Sprintf("%s:%s", host, port)
 }
 
-// GetDatabaseURL - return formated postgres url
-func GetDatabaseURL(user, pass, host, port, name string) string {
+// GetPostgreSqlURL - return formated postgres url
+func GetPostgreSqlURL(user, pass, host, port, name string) string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		user,
 		pass,
