@@ -13,3 +13,12 @@ func GetDefaultNumber[T Number](value, defaultValue T) T {
 	}
 	return value
 }
+
+func ExistInArray[T comparable](arr []T, value T) bool {
+	for _, v := range arr {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
