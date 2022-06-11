@@ -24,7 +24,7 @@ func (c *Config) Validate() error {
 }
 
 type PostgreSQL struct {
-	*pgxpool.Pool
+	DB *pgxpool.Pool
 }
 
 func New(ctx context.Context, cfg Config, logger logger.Logger) (*PostgreSQL, error) {
@@ -41,7 +41,7 @@ func New(ctx context.Context, cfg Config, logger logger.Logger) (*PostgreSQL, er
 
 	psql := &PostgreSQL{pool}
 
-	if err := psql.PingDB(); err != nil {
+	if err := psql.Ping(); err != nil {
 		return nil, err
 	}
 
@@ -50,6 +50,10 @@ func New(ctx context.Context, cfg Config, logger logger.Logger) (*PostgreSQL, er
 	return psql, nil
 }
 
-func (p *PostgreSQL) PingDB() error {
-	return p.Ping(context.Background())
+func (p *PostgreSQL) Ping() error {
+	return p.DB.Ping(context.Background())
+}
+
+func (p *PostgreSQL) Close() {
+	p.DB.Close()
 }

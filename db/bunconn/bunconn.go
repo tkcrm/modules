@@ -26,7 +26,7 @@ func (c *Config) Validate() error {
 }
 
 type BunConn struct {
-	Sqldb *sql.DB
+	DB *sql.DB
 	bun.IDB
 }
 
@@ -52,5 +52,9 @@ func New(cfg Config, logger logger.Logger) (*BunConn, error) {
 }
 
 func (s *BunConn) Ping() error {
-	return s.Sqldb.Ping()
+	return s.DB.Ping()
+}
+
+func (s *BunConn) Close() error {
+	return s.DB.Close()
 }
