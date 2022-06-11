@@ -1,4 +1,4 @@
-package postgresql
+package postgres
 
 import (
 	"context"
@@ -27,7 +27,7 @@ type PostgreSQL struct {
 	*pgxpool.Pool
 }
 
-func NewPostgreSQL(ctx context.Context, cfg Config, logger logger.Logger) (*PostgreSQL, error) {
+func New(ctx context.Context, cfg Config, logger logger.Logger) (*PostgreSQL, error) {
 
 	config, err := pgxpool.ParseConfig(cfg.DSN)
 	if err != nil {
