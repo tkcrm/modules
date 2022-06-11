@@ -27,7 +27,6 @@ type IConfig interface {
 //	if err := cfg.LoadConfig(&config); err != nil {
 //		log.Fatalf("could not load configuration: %v", err)
 //	}
-
 func LoadConfig(cfg IConfig) error {
 
 	if reflect.ValueOf(cfg).Kind() != reflect.Ptr {
