@@ -2,6 +2,9 @@ package utils
 
 import (
 	"math"
+	"reflect"
+	"runtime"
+	"strings"
 
 	"github.com/goccy/go-json"
 
@@ -18,7 +21,7 @@ func Round(v float64, n float64) float64 {
 }
 
 func GetDefaultBool(v, d bool) bool {
-	if v == false {
+	if !v {
 		v = d
 	}
 	return v
@@ -80,16 +83,20 @@ func FromProto[TDst any](src protoreflect.ProtoMessage) (TDst, error) {
 	return dst, nil
 }
 
-func ToModel(src interface{}, dst interface{}) error {
+func JsonToStruct(src interface{}, dst interface{}) error {
 
 	result, err := json.Marshal(src)
 	if err != nil {
 		return err
 	}
 
-	if err := json.Unmarshal(result, dst); err != nil {
-		return err
-	}
+	return json.Unmarshal(result, dst)
+}
 
-	return nil
+// GetFunctionName return caller function name
+func GetFunctionName(temp interface{}) string {
+	strs := strings.Split((runtime.FuncForPC(reflect.ValueOf(temp).Pointer()).Name()), ".")
+	funcName := strs[len(strs)-1]
+	strs = strings.Split(funcName, "-")
+	return strs[0]
 }

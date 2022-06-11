@@ -7,6 +7,35 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+type LogLevel string
+
+func (l LogLevel) String() string {
+	return string(l)
+}
+
+const (
+	DEBUG   LogLevel = "debug"
+	INFO    LogLevel = "info"
+	WARNING LogLevel = "warning"
+	ERROR   LogLevel = "error"
+	FATAL   LogLevel = "fatal"
+	PANIC   LogLevel = "panic"
+)
+
+// GetAllLevels return all log levels. Used in validation.
+func GetAllLevels() []interface{} {
+	return []interface{}{
+		DEBUG.String(), INFO.String(), WARNING.String(), ERROR.String(), FATAL.String(), PANIC.String(),
+	}
+}
+
+type LogFormat string
+
+const (
+	FORMAT_CONSOLE LogFormat = "console"
+	FORMAT_JSON    LogFormat = "json"
+)
+
 // Logger common interface
 type Logger interface {
 	Debug(...interface{})
@@ -22,36 +51,49 @@ type Logger interface {
 	Panic(...interface{})
 	Panicf(string, ...interface{})
 	With(...interface{}) *zap.SugaredLogger
+	Sync() error
 }
 
-// New ...
-func New(l string) *zap.Logger {
-
+func initLogger(level LogLevel, format LogFormat, consoleColored bool, timeKey string) *zap.Logger {
 	atom := zap.NewAtomicLevel()
 
 	encoderCfg := zap.NewProductionEncoderConfig()
-	encoderCfg.TimeKey = "timestamp"
+
+	encoderCfg.TimeKey = "ts"
+	if timeKey != "" {
+		encoderCfg.TimeKey = timeKey
+	}
+
 	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
 
+	// Default JSON encoder
+	encoder := zapcore.NewJSONEncoder(encoderCfg)
+	switch format {
+	case FORMAT_CONSOLE:
+		if consoleColored {
+			encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
+		}
+		encoder = zapcore.NewConsoleEncoder(encoderCfg)
+	}
+
 	logger := zap.New(zapcore.NewCore(
-		zapcore.NewJSONEncoder(encoderCfg),
+		encoder,
 		zapcore.Lock(os.Stdout),
 		atom,
 	))
-	defer logger.Sync()
 
-	switch l {
-	case "debug":
+	switch level {
+	case DEBUG:
 		atom.SetLevel(zap.DebugLevel)
-	case "info":
+	case INFO:
 		atom.SetLevel(zap.InfoLevel)
-	case "warning":
+	case WARNING:
 		atom.SetLevel(zap.WarnLevel)
-	case "error":
+	case ERROR:
 		atom.SetLevel(zap.ErrorLevel)
-	case "fatal":
+	case FATAL:
 		atom.SetLevel(zap.FatalLevel)
-	case "panic":
+	case PANIC:
 		atom.SetLevel(zap.PanicLevel)
 	default:
 		atom.SetLevel(zap.InfoLevel)
@@ -60,12 +102,30 @@ func New(l string) *zap.Logger {
 	return logger
 }
 
-// DefaultLogger ...
-func DefaultLogger(level, microservice string) Logger {
-	if level == "" {
-		level = "info"
+// New - init new logger with options
+func New(opts ...Option) Logger {
+
+	options := Options{}
+	for _, opt := range opts {
+		opt(&options)
 	}
-	return New(level).With(
-		zap.String("ms", microservice),
-	).Sugar()
+
+	if options.LogLevel == "" {
+		options.LogLevel = DEBUG
+	}
+
+	logger := initLogger(
+		options.LogLevel,
+		options.LogFormat,
+		options.ConsoleColored,
+		options.TimeKey,
+	)
+
+	if options.AppName != "" {
+		logger = logger.With(
+			zap.String("app", options.AppName),
+		)
+	}
+
+	return logger.Sugar()
 }

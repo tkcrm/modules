@@ -8,7 +8,10 @@ import (
 
 func TestLogger(t *testing.T) {
 
-	l := logger.DefaultLogger("debug", "tracker")
+	l := logger.New(
+		logger.WithAppName("test"),
+		logger.WithLogLevel(logger.DEBUG),
+	)
 
 	l.Info("Hello world")
 }
