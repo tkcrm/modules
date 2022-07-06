@@ -34,7 +34,7 @@ func New(ctx context.Context, cfg Config, logger logger.Logger) (*PostgreSQL, er
 		return nil, err
 	}
 
-	pool, err := pgxpool.ConnectConfig(context.Background(), config)
+	pool, err := pgxpool.ConnectConfig(ctx, config)
 	if err != nil {
 		return nil, err
 	}
