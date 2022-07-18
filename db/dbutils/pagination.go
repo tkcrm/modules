@@ -14,7 +14,7 @@ func WithMaxLimit(v uint64) Option {
 	}
 }
 
-func Pagination(page, records *uint64, opts ...Option) (limit, offset uint64, err error) {
+func Pagination(page, pageSize *uint64, opts ...Option) (limit, offset uint64, err error) {
 
 	options := Options{
 		MaxLimit: 100,
@@ -26,8 +26,8 @@ func Pagination(page, records *uint64, opts ...Option) (limit, offset uint64, er
 	limit = 100
 	offset = 0
 
-	if records != nil {
-		limit = *records
+	if pageSize != nil {
+		limit = *pageSize
 	}
 
 	if page != nil && *page != 0 {
@@ -35,11 +35,11 @@ func Pagination(page, records *uint64, opts ...Option) (limit, offset uint64, er
 	}
 
 	if limit < 1 {
-		return 0, 0, fmt.Errorf("pagination error: records cannot be less than 1")
+		return 0, 0, fmt.Errorf("pagination error: page size cannot be less than 1")
 	}
 
 	if limit > options.MaxLimit {
-		return 0, 0, fmt.Errorf("pagination error: records cannot be greater than %d", options.MaxLimit)
+		return 0, 0, fmt.Errorf("pagination error: page size cannot be greater than %d", options.MaxLimit)
 	}
 
 	return
