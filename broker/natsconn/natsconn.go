@@ -51,3 +51,12 @@ func New(logger logger.Logger, config Config, appName string, opts ...nats.Optio
 
 	return nc, nil
 }
+
+func NewEncoded(logger logger.Logger, config Config, appName string, encType NatsEncodeType, opts ...nats.Option) (*nats.EncodedConn, error) {
+	nc, err := New(logger, config, appName, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	return nats.NewEncodedConn(nc, string(encType))
+}
