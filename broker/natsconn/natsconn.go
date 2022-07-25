@@ -53,6 +53,11 @@ func New(logger logger.Logger, config Config, appName string, opts ...nats.Optio
 }
 
 func NewEncoded(logger logger.Logger, config Config, appName string, encType NatsEncodeType, opts ...nats.Option) (*nats.EncodedConn, error) {
+
+	if encType == "" {
+		return nil, fmt.Errorf("empty encode type")
+	}
+
 	nc, err := New(logger, config, appName, opts...)
 	if err != nil {
 		return nil, err
