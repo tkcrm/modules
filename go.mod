@@ -3,7 +3,7 @@ module github.com/tkcrm/modules
 go 1.18
 
 require (
-	github.com/cristalhq/aconfig v0.17.0
+	github.com/cristalhq/aconfig v0.18.1
 	github.com/cristalhq/aconfig/aconfigdotenv v0.17.1
 	github.com/nats-io/nats.go v1.16.0
 	github.com/uptrace/bun v1.1.6
