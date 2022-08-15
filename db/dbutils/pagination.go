@@ -15,10 +15,10 @@ func WithMaxLimit(v uint64) Option {
 }
 
 func Pagination(page, pageSize *uint64, opts ...Option) (limit, offset uint64, err error) {
-
 	options := Options{
 		MaxLimit: 100,
 	}
+
 	for _, opt := range opts {
 		opt(&options)
 	}

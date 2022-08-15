@@ -28,7 +28,6 @@ type PostgreSQL struct {
 }
 
 func New(ctx context.Context, cfg Config, logger logger.Logger) (*PostgreSQL, error) {
-
 	config, err := pgxpool.ParseConfig(cfg.DSN)
 	if err != nil {
 		return nil, err

@@ -31,7 +31,6 @@ type BunConn struct {
 }
 
 func New(cfg Config, logger logger.Logger) (*BunConn, error) {
-
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(cfg.DSN)))
 	if err := sqldb.Ping(); err != nil {
 		return nil, err

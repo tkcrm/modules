@@ -104,8 +104,8 @@ func initLogger(level LogLevel, format LogFormat, consoleColored bool, timeKey s
 
 // New - init new logger with options
 func New(opts ...Option) Logger {
-
 	options := Options{}
+
 	for _, opt := range opts {
 		opt(&options)
 	}

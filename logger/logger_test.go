@@ -7,7 +7,6 @@ import (
 )
 
 func TestLogger(t *testing.T) {
-
 	l := logger.New(
 		logger.WithAppName("test"),
 		logger.WithLogLevel(logger.DEBUG),

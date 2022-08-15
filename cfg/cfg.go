@@ -21,12 +21,12 @@ type IConfig interface {
 // LoadConfig also call a `Validate` method.
 //
 // Example:
+//
 //	var config internalConfig.Config
 //	if err := cfg.LoadConfig(&config); err != nil {
 //		log.Fatalf("could not load configuration: %v", err)
 //	}
 func LoadConfig(cfg IConfig, opts ...Option) error {
-
 	if reflect.ValueOf(cfg).Kind() != reflect.Ptr {
 		return fmt.Errorf("config variable must be a pointer")
 	}
