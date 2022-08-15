@@ -51,7 +51,6 @@ func ExistInArray[T comparable](arr []T, value T) bool {
 }
 
 func ToProto(src interface{}, dst protoreflect.ProtoMessage) error {
-
 	result, err := json.Marshal(src)
 	if err != nil {
 		return err
@@ -65,7 +64,6 @@ func ToProto(src interface{}, dst protoreflect.ProtoMessage) error {
 }
 
 func FromProto[TDst any](src protoreflect.ProtoMessage) (TDst, error) {
-
 	m := protojson.MarshalOptions{
 		UseProtoNames: true,
 	}
@@ -84,7 +82,6 @@ func FromProto[TDst any](src protoreflect.ProtoMessage) (TDst, error) {
 }
 
 func JsonToStruct(src interface{}, dst interface{}) error {
-
 	result, err := json.Marshal(src)
 	if err != nil {
 		return err

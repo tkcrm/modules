@@ -20,7 +20,6 @@ func (c *Config) Validate() error {
 }
 
 func New(logger logger.Logger, config Config, appName string, opts ...nats.Option) (*nats.Conn, error) {
-
 	if opts == nil {
 		opts = make([]nats.Option, 0)
 	}
@@ -53,7 +52,6 @@ func New(logger logger.Logger, config Config, appName string, opts ...nats.Optio
 }
 
 func NewEncoded(logger logger.Logger, config Config, appName string, encType NatsEncodeType, opts ...nats.Option) (*nats.EncodedConn, error) {
-
 	if encType == "" {
 		return nil, fmt.Errorf("empty encode type")
 	}

@@ -7,7 +7,6 @@ import (
 )
 
 func Test_Pagination(t *testing.T) {
-
 	page := uint64(1)
 	records := uint64(1)
 
