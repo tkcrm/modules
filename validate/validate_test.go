@@ -11,24 +11,51 @@ import (
 func Test_Phone(t *testing.T) {
 	tt := []struct {
 		input   string
+		options []validate.PhoneOption
 		isValid bool
 	}{
-		{"", false},
-		{"+79991224312", true},
-		{"+995593482054", true},
-		{"+9995593482054", true},
-		{"+7999122431q", false},
-		{"79991224312", false},
-		{"+7999-1224312", false},
-		{"+9995000009991224312", false},
+		{"", nil, false},
+		{"+79991224312", nil, true},
+		{"+995593482054", nil, true},
+		{"+9995593482054", nil, true},
+		{"+7999122431q", nil, false},
+		{"79991224312", nil, false},
+		{"+7999-1224312", nil, false},
+		{"+9995000009991224312", nil, false},
+		{"+6512345678", []validate.PhoneOption{
+			validate.WithDialCode("65"),
+			validate.WithPhoneNumberSize("8"),
+		}, true},
+		{"+6512345678", []validate.PhoneOption{
+			validate.WithDialCode("66"),
+			validate.WithPhoneNumberSize("8"),
+		}, false},
+		{"+65123456789012", []validate.PhoneOption{
+			validate.WithPhoneNumberSize("12"),
+		}, true},
+		{"+651123456789012", []validate.PhoneOption{
+			validate.WithPhoneNumberSize("12"),
+		}, true},
+		{"+6512123456789012", []validate.PhoneOption{
+			validate.WithPhoneNumberSize("12"),
+		}, false},
+		{"+1-2229567843451", []validate.PhoneOption{
+			validate.WithDialCode("1-222"),
+		}, true},
 	}
 
 	for _, tc := range tt {
 		t.Run("test mobile number: "+tc.input, func(t *testing.T) {
-			err := validate.Phone(tc.input)
+			opts := []validate.PhoneOption{}
+			if tc.options != nil {
+				opts = tc.options
+			}
+
+			err := validate.Phone(tc.input, opts...)
 			if !tc.isValid {
 				require.Error(t, err)
 			}
+
 			assert.Equal(t, tc.isValid, err == nil)
 		})
 	}
