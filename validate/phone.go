@@ -1,12 +1,13 @@
 package validate
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 )
 
-type PhoneOption func(*PhoneOptions)
+type PhoneOption func(*PhoneOptions) error
 
 type PhoneOptions struct {
 	DialCode        string
@@ -14,18 +15,22 @@ type PhoneOptions struct {
 }
 
 func WithDialCode(v string) PhoneOption {
-	return func(o *PhoneOptions) {
-		if v != "" {
-			o.DialCode = v
+	return func(o *PhoneOptions) error {
+		if v == "" {
+			return errors.New("empty dial code")
 		}
+		o.DialCode = v
+		return nil
 	}
 }
 
 func WithPhoneNumberSize(v string) PhoneOption {
-	return func(o *PhoneOptions) {
-		if v != "" {
-			o.PhoneNumberSize = v
+	return func(o *PhoneOptions) error {
+		if v == "" {
+			return errors.New("empty phone number size")
 		}
+		o.PhoneNumberSize = v
+		return nil
 	}
 }
 
@@ -35,7 +40,9 @@ func Phone(p string, opts ...PhoneOption) error {
 	}
 
 	for _, opt := range opts {
-		opt(&options)
+		if err := opt(&options); err != nil {
+			return err
+		}
 	}
 
 	dialCodeRegex := `\d{1,3}`
