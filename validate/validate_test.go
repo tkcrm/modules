@@ -42,6 +42,12 @@ func Test_Phone(t *testing.T) {
 		{"+1-2229567843451", []validate.PhoneOption{
 			validate.WithDialCode("1-222"),
 		}, true},
+		{"+1-2229567843451", []validate.PhoneOption{
+			validate.WithDialCode(""),
+		}, false},
+		{"+1-2229567843451", []validate.PhoneOption{
+			validate.WithPhoneNumberSize(""),
+		}, false},
 	}
 
 	for _, tc := range tt {
