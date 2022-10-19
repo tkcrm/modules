@@ -74,20 +74,21 @@ func Test_Email(t *testing.T) {
 	}{
 		{"", false},
 		{"test@test.com", true},
-		{"info@finchpay.io", true},
 		{"test@test.ru", true},
 		{"t@com", false},
 		{"t@.com", false},
 		{"@test.com", false},
 		{"test.com", false},
+		{"asascas@test", false},
 	}
 
 	for _, tc := range tt {
 		t.Run("test email: "+tc.input, func(t *testing.T) {
-			err := validate.Phone(tc.input)
+			err := validate.Email(tc.input)
 			if !tc.isValid {
 				require.Error(t, err)
 			}
+
 			assert.Equal(t, tc.isValid, err == nil)
 		})
 	}
