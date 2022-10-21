@@ -12,10 +12,10 @@ import (
 )
 
 type Config struct {
-	DSN      string
-	BUNDEBUG bool
+	DSN      string `json:"POSTGRES_DSN"`
+	BUNDEBUG bool   `json:"BUNDEBUG" env:"BUNDEBUG"`
 	// In seconds. Default 10 seconds
-	PingInterval int `default:"10"`
+	PingInterval int `json:"POSTGRES_PING_INTERVAL" default:"10"`
 }
 
 func (c *Config) Validate() error {

@@ -3,10 +3,10 @@ package mqttconn
 import validation "github.com/go-ozzo/ozzo-validation/v4"
 
 type Config struct {
-	Host string `default:"localhost"`
-	Port string `default:"1883"`
-	User string
-	Pass string
+	Host     string `json:"MQTT_HOST" default:"localhost"`
+	Port     string `json:"MQTT_PORT" default:"1883"`
+	User     string `json:"MQTT_USER"`
+	Password string `json:"MQTT_PASSWORD"`
 }
 
 func (c *Config) Validate() error {

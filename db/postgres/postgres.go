@@ -9,11 +9,11 @@ import (
 )
 
 type Config struct {
-	DSN string
+	DSN string `json:"POSTGRES_DSN"`
 	// In seconds. Default 10 seconds
-	PingInterval int   `default:"10"`
-	MaxConns     int32 `default:"6"`
-	MinConns     int32 `default:"3"`
+	PingInterval int   `json:"POSTGRES_PING_INTERVAL" default:"10"`
+	MaxConns     int32 `json:"POSTGRES_MAX_CONNS" default:"6"`
+	MinConns     int32 `json:"POSTGRES_MIN_CONNS" default:"3"`
 }
 
 func (c *Config) Validate() error {

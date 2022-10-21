@@ -9,7 +9,7 @@ import (
 )
 
 type Config struct {
-	DSN string
+	DSN string `json:"NATS_DSN"`
 }
 
 func (c *Config) Validate() error {
