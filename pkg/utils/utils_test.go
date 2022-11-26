@@ -3,7 +3,7 @@ package utils_test
 import (
 	"testing"
 
-	"github.com/tkcrm/modules/utils"
+	"github.com/tkcrm/modules/pkg/utils"
 )
 
 func Test_ExistInArray(t *testing.T) {
