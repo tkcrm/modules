@@ -5,7 +5,7 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/nats-io/nats.go"
-	"github.com/tkcrm/modules/logger"
+	"github.com/tkcrm/modules/pkg/logger"
 )
 
 type Config struct {

@@ -3,7 +3,7 @@ package logger_test
 import (
 	"testing"
 
-	"github.com/tkcrm/modules/logger"
+	"github.com/tkcrm/modules/pkg/logger"
 )
 
 func TestLogger(t *testing.T) {

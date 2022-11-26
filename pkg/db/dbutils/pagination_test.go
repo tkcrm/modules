@@ -3,7 +3,7 @@ package dbutils_test
 import (
 	"testing"
 
-	"github.com/tkcrm/modules/db/dbutils"
+	"github.com/tkcrm/modules/pkg/db/dbutils"
 )
 
 func Test_Pagination(t *testing.T) {

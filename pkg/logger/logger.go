@@ -80,7 +80,7 @@ func initLogger(level LogLevel, format LogFormat, consoleColored bool, timeKey s
 		encoder,
 		zapcore.Lock(os.Stdout),
 		atom,
-	))
+	), zap.AddCaller())
 
 	switch level {
 	case DEBUG:
