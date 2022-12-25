@@ -48,6 +48,7 @@ require (
 )
 
 require (
+	github.com/aws/smithy-go v1.13.5
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/goccy/go-json v0.10.0
 	github.com/jackc/pgx/v4 v4.17.2

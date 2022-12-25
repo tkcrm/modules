@@ -3,9 +3,33 @@ package logger
 import (
 	"os"
 
+	"github.com/aws/smithy-go/logging"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
+
+type internalLogger struct {
+	*zap.SugaredLogger
+}
+
+func (l internalLogger) Logf(classification logging.Classification, format string, v ...interface{}) {
+	switch string(classification) {
+	case DEBUG.String():
+		l.Debugf(format, v)
+	case INFO.String():
+		l.Infof(format, v)
+	case WARNING.String():
+		l.Warnf(format, v)
+	case ERROR.String():
+		l.Errorf(format, v)
+	case FATAL.String():
+		l.Fatalf(format, v)
+	case PANIC.String():
+		l.Panicf(format, v)
+	default:
+		l.Infof(format, v)
+	}
+}
 
 type LogLevel string
 
@@ -50,6 +74,7 @@ type Logger interface {
 	Fatalf(string, ...interface{})
 	Panic(...interface{})
 	Panicf(string, ...interface{})
+	Logf(classification logging.Classification, format string, v ...interface{})
 	With(...interface{}) *zap.SugaredLogger
 	Sync() error
 }
@@ -127,5 +152,7 @@ func New(opts ...Option) Logger {
 		)
 	}
 
-	return logger.Sugar()
+	return internalLogger{
+		SugaredLogger: logger.Sugar(),
+	}
 }
