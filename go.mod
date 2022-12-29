@@ -50,6 +50,7 @@ require (
 require (
 	github.com/aws/smithy-go v1.13.5
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
+	github.com/gobeam/stringy v0.0.5
 	github.com/goccy/go-json v0.10.0
 	github.com/jackc/pgx/v4 v4.17.2
 	github.com/nats-io/nats-server/v2 v2.9.10 // indirect
