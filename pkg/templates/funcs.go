@@ -1,6 +1,7 @@
 package templates
 
 import (
+	"fmt"
 	"html/template"
 	"strings"
 	"time"
@@ -16,23 +17,26 @@ func (t *Templates) AddFunc(key string, value any) {
 
 var defaultTemplateFuncs = template.FuncMap{
 	"lower": strings.ToLower,
-	"snake_case": func(str string) string {
+	"snakeCase": func(str string) string {
 		return stringy.New(str).SnakeCase().ToLower()
 	},
-	"camel_case": func(str string) string {
+	"camelCase": func(str string) string {
 		return stringy.New(str).CamelCase()
 	},
-	"lcfirst": func(str string) string {
-		if str == "ID" {
-			return "id"
-		}
+	"lowerCaseFirstLetter": func(str string) string {
 		return stringy.New(str).LcFirst()
 	},
+	"upperCaseFirstLetter": func(str string) string {
+		return stringy.New(str).UcFirst()
+	},
 	"join": strings.Join,
-	"date_format": func(t time.Time, layout string) string {
+	"dateFormat": func(t time.Time, layout string) string {
 		return t.Format(layout)
 	},
 	"increment": func(v int) int {
 		return v + 1
+	},
+	"roundFloat": func(count string, number float64) string {
+		return fmt.Sprintf("%."+count+"f", number)
 	},
 }
