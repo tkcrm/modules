@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"crypto/rand"
 	"math"
 	"reflect"
 	"runtime"
 	"strings"
+	"unsafe"
 
 	"github.com/goccy/go-json"
 )
@@ -62,4 +64,27 @@ func GetFunctionName(temp interface{}) string {
 	funcName := strs[len(strs)-1]
 	strs = strings.Split(funcName, "-")
 	return strs[0]
+}
+
+var numbers = []byte("0123456789")
+var alphabet = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+var symbols = []byte("[]/-()%#@")
+
+// GenerateRandomString
+func GenerateRandomString(size int, includeNumbers bool, includeSymbols bool) string {
+	str := alphabet
+	if includeNumbers {
+		str = append(str, numbers...)
+	}
+	if includeSymbols {
+		str = append(str, symbols...)
+	}
+
+	b := make([]byte, size)
+	rand.Read(b)
+	for i := 0; i < size; i++ {
+		b[i] = str[b[i]%byte(len(str))]
+	}
+
+	return *(*string)(unsafe.Pointer(&b))
 }
