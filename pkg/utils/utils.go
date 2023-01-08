@@ -49,13 +49,20 @@ func ExistInArray[T comparable](arr []T, value T) bool {
 	return false
 }
 
-func JsonToStruct(src interface{}, dst interface{}) error {
+func JsonToStruct(src any, dst any) error {
 	result, err := json.Marshal(src)
 	if err != nil {
 		return err
 	}
-
 	return json.Unmarshal(result, dst)
+}
+
+func BytesToStruct[T any](data []byte) (T, error) {
+	var res T
+	if err := json.Unmarshal(data, &res); err != nil {
+		return res, err
+	}
+	return res, nil
 }
 
 // GetFunctionName return caller function name
