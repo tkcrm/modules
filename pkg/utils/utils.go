@@ -49,6 +49,48 @@ func ExistInArray[T comparable](arr []T, value T) bool {
 	return false
 }
 
+func FindInArray[T any](values []T, fn func(v T) bool) (T, bool) {
+	for _, item := range values {
+		if fn(item) {
+			return item, true
+		}
+	}
+
+	var emptyRes T
+	return emptyRes, false
+}
+
+// FilterValues - return array without values, existed in second array
+func FilterValues[T comparable](values []T, filterValues []T) []T {
+	result := []T{}
+	for _, item := range values {
+		if !ExistInArray(filterValues, item) {
+			result = append(result, item)
+		}
+	}
+
+	return result
+}
+
+// FilterArrayOfStructs returns a filtered array, each element of which satisfies the condition
+func FilterArray[T any](values []T, fn func(v T) bool) []T {
+	result := []T{}
+	for _, item := range values {
+		if fn(item) {
+			result = append(result, item)
+		}
+	}
+
+	return result
+}
+
+func AppendIfNotExistInArray[T any](values []T, newElement T, fn func(v T) bool) []T {
+	if _, ok := FindInArray(values, fn); !ok {
+		values = append(values, newElement)
+	}
+	return values
+}
+
 func JsonToStruct(src any, dst any) error {
 	result, err := json.Marshal(src)
 	if err != nil {

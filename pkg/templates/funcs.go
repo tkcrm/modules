@@ -9,13 +9,13 @@ import (
 	"github.com/gobeam/stringy"
 )
 
-func (t *Templates) AddFunc(key string, value any) {
+func (t *templates) AddFunc(key string, value any) {
 	t.mu.Lock()
 	t.Funcs[key] = value
 	t.mu.Unlock()
 }
 
-var defaultTemplateFuncs = template.FuncMap{
+var DefaultTemplateFuncs = template.FuncMap{
 	"lower": strings.ToLower,
 	"snakeCase": func(str string) string {
 		return stringy.New(str).SnakeCase().ToLower()

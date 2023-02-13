@@ -11,11 +11,10 @@ import (
 
 var (
 	errExecuteTemplateStr = "execute template error"
-
-	defaultTplName = "name"
+	defaultTplName        = "name"
 )
 
-func (t *Templates) Compile(params CompileParams) ([]byte, error) {
+func (t *templates) Compile(params CompileParams) ([]byte, error) {
 	if err := params.Validate(); err != nil {
 		return nil, err
 	}

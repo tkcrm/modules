@@ -7,15 +7,16 @@ import (
 
 type ITemplates interface {
 	Compile(params CompileParams) ([]byte, error)
+	AddFunc(key string, value any)
 }
 
-type Templates struct {
+type templates struct {
 	mu    sync.Mutex
 	Funcs template.FuncMap
 }
 
 func New() ITemplates {
-	return &Templates{
-		Funcs: defaultTemplateFuncs,
+	return &templates{
+		Funcs: DefaultTemplateFuncs,
 	}
 }
