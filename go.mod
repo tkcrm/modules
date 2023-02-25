@@ -1,15 +1,15 @@
 module github.com/tkcrm/modules
 
-go 1.19
+go 1.20
 
 require (
 	github.com/cristalhq/aconfig v0.18.3
 	github.com/cristalhq/aconfig/aconfigdotenv v0.17.1
-	github.com/nats-io/nats.go v1.23.0
+	github.com/nats-io/nats.go v1.24.0
 	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/v9 v9.0.2
-	github.com/stretchr/testify v1.8.1
-	github.com/uptrace/bun v1.1.11
+	github.com/stretchr/testify v1.8.2
+	github.com/uptrace/bun v1.1.12
 	go.uber.org/zap v1.24.0
 )
 
@@ -58,9 +58,9 @@ require (
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/taosdata/driver-go/v3 v3.1.0
-	github.com/uptrace/bun/dialect/pgdialect v1.1.11
-	github.com/uptrace/bun/driver/pgdriver v1.1.11
-	github.com/uptrace/bun/extra/bundebug v1.1.11
+	github.com/uptrace/bun/dialect/pgdialect v1.1.12
+	github.com/uptrace/bun/driver/pgdriver v1.1.12
+	github.com/uptrace/bun/extra/bundebug v1.1.12
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/crypto v0.6.0 // indirect
