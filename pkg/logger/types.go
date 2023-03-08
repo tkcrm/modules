@@ -1,6 +1,9 @@
 package logger
 
-import "github.com/aws/smithy-go/logging"
+import (
+	"github.com/aws/smithy-go/logging"
+	"go.uber.org/zap"
+)
 
 type LogLevel string
 
@@ -36,21 +39,38 @@ const (
 	LoggerFormatJSON    LogFormat = "json"
 )
 
+type SugaredLogger = zap.SugaredLogger
+
 // Logger common interface
 type Logger interface {
 	Debug(...any)
-	Debugf(string, ...any)
+	Debugf(template string, args ...any)
+	Debugw(msg string, keysAndValues ...any)
+
 	Info(...any)
-	Infof(string, ...any)
+	Infof(template string, args ...any)
+	Infow(msg string, keysAndValues ...any)
+
 	Warn(...any)
-	Warnf(string, ...any)
+	Warnf(template string, args ...any)
+	Warnw(msg string, keysAndValues ...any)
+
 	Error(...any)
-	Errorf(string, ...any)
+	Errorf(template string, args ...any)
+	Errorw(msg string, keysAndValues ...any)
+
 	Fatal(...any)
-	Fatalf(string, ...any)
+	Fatalf(template string, args ...any)
+	Fatalw(msg string, keysAndValues ...any)
+
 	Panic(...any)
-	Panicf(string, ...any)
+	Panicf(template string, args ...any)
+	Panicw(msg string, keysAndValues ...any)
+
 	With(...any) Logger
+
+	Sugar() *SugaredLogger
+
 	Sync() error
 }
 
