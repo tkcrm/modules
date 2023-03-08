@@ -5,11 +5,11 @@ import (
 	"go.uber.org/zap"
 )
 
-type internalLogger struct {
-	*zap.SugaredLogger
+type logger struct {
+	*SugaredLogger
 }
 
-func newInternalLogger(opts ...Option) *internalLogger {
+func newInternalLogger(opts ...Option) *logger {
 	options := Options{}
 
 	for _, opt := range opts {
@@ -20,7 +20,7 @@ func newInternalLogger(opts ...Option) *internalLogger {
 		options.LogLevel = LogLevelDebug
 	}
 
-	logger := initZapLogger(
+	l := initZapLogger(
 		options.LogLevel,
 		options.LogFormat,
 		options.ConsoleColored,
@@ -28,17 +28,17 @@ func newInternalLogger(opts ...Option) *internalLogger {
 	)
 
 	if options.AppName != "" {
-		logger = logger.With(
+		l = l.With(
 			zap.String("app", options.AppName),
 		)
 	}
 
-	return &internalLogger{
-		SugaredLogger: logger.Sugar(),
+	return &logger{
+		SugaredLogger: l.Sugar(),
 	}
 }
 
-func (l internalLogger) Logf(classification logging.Classification, format string, v ...interface{}) {
+func (l logger) Logf(classification logging.Classification, format string, v ...interface{}) {
 	switch string(classification) {
 	case LogLevelDebug.String():
 		l.Debugf(format, v)
@@ -57,10 +57,14 @@ func (l internalLogger) Logf(classification logging.Classification, format strin
 	}
 }
 
-func (l internalLogger) With(params ...any) Logger {
-	return internalLogger{l.SugaredLogger.With(params...)}
+func (l logger) With(args ...any) Logger {
+	return &logger{l.SugaredLogger.With(args...)}
 }
 
-func (l *internalLogger) AWSLogger() AWSLogger {
+func (l *logger) AWSLogger() AWSLogger {
 	return l
+}
+
+func (l *logger) Sugar() *SugaredLogger {
+	return l.SugaredLogger
 }
