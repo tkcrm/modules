@@ -4,7 +4,7 @@ import (
 	"context"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tkcrm/modules/pkg/logger"
 )
 
@@ -32,7 +32,7 @@ func New(ctx context.Context, cfg Config, logger logger.Logger) (*PostgreSQL, er
 		return nil, err
 	}
 
-	pool, err := pgxpool.ConnectConfig(ctx, config)
+	pool, err := pgxpool.NewWithConfig(ctx, config)
 	if err != nil {
 		return nil, err
 	}
