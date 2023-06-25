@@ -1,0 +1,14 @@
+package pgtypeutils
+
+import "github.com/jackc/pgx/v5/pgtype"
+
+func EncodeText(value *string) pgtype.Text {
+	v := ""
+	if value != nil {
+		v = *value
+	}
+	return pgtype.Text{
+		String: v,
+		Valid:  true,
+	}
+}
