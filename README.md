@@ -13,3 +13,5 @@ This repository contains all common modules for tkcrm go apps
 - [x] Dragonfly
 - [x] Postgres
 - [x] TDEngine
+- [x] Limiter
+- [x] Task manager
