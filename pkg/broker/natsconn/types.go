@@ -1,9 +1,16 @@
 package natsconn
 
+type ConnType int
+
+const (
+	ConnTypeDefault ConnType = iota
+	ConnTypeEncoded
+)
+
 type NatsEncodeType string
 
 const (
-	JSON_ENCODER    NatsEncodeType = "json"
-	GOB_ENCODER     NatsEncodeType = "gob"
-	DEFAULT_ENCODER NatsEncodeType = "default"
+	NatsEncodeJson    NatsEncodeType = "json"
+	NatsEncodeGob     NatsEncodeType = "gob"
+	NatsEncodeDefault NatsEncodeType = "default"
 )

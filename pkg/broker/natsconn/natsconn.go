@@ -3,23 +3,17 @@ package natsconn
 import (
 	"fmt"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/nats-io/nats.go"
 	"github.com/tkcrm/modules/pkg/logger"
 )
 
-type Config struct {
-	DSN string `json:"NATS_DSN"`
+type Nats struct {
+	connType    ConnType
+	conn        *nats.Conn
+	encodedConn *nats.EncodedConn
 }
 
-func (c *Config) Validate() error {
-	return validation.ValidateStruct(
-		c,
-		validation.Field(&c.DSN, validation.Required),
-	)
-}
-
-func New(logger logger.Logger, config Config, appName string, opts ...nats.Option) (*nats.Conn, error) {
+func New(logger logger.Logger, config Config, appName string, opts ...nats.Option) (*Nats, error) {
 	if opts == nil {
 		opts = make([]nats.Option, 0)
 	}
@@ -48,10 +42,13 @@ func New(logger logger.Logger, config Config, appName string, opts ...nats.Optio
 
 	logger.Info("successfully connected to nats")
 
-	return nc, nil
+	return &Nats{
+		connType: ConnTypeDefault,
+		conn:     nc,
+	}, nil
 }
 
-func NewEncoded(logger logger.Logger, config Config, appName string, encType NatsEncodeType, opts ...nats.Option) (*nats.EncodedConn, error) {
+func NewEncoded(logger logger.Logger, config Config, appName string, encType NatsEncodeType, opts ...nats.Option) (*Nats, error) {
 	if encType == "" {
 		return nil, fmt.Errorf("empty encode type")
 	}
@@ -61,5 +58,11 @@ func NewEncoded(logger logger.Logger, config Config, appName string, encType Nat
 		return nil, err
 	}
 
-	return nats.NewEncodedConn(nc, string(encType))
+	nc.connType = ConnTypeEncoded
+	nc.encodedConn, err = nats.NewEncodedConn(nc.conn, string(encType))
+	if err != nil {
+		return nil, err
+	}
+
+	return nc, nil
 }

@@ -31,7 +31,7 @@ func LoadConfig(cfg IConfig, opts ...Option) error {
 		return fmt.Errorf("config variable must be a pointer")
 	}
 
-	options := Options{}
+	options := options{}
 	for _, opt := range opts {
 		opt(&options)
 	}
@@ -59,15 +59,4 @@ func LoadConfig(cfg IConfig, opts ...Option) error {
 	}
 
 	return cfg.Validate()
-}
-
-// GetPostgreSqlURL - return formated postgres url
-func GetPostgreSqlURL(user, pass, host, port, name string) string {
-	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		user,
-		pass,
-		host,
-		port,
-		name,
-	)
 }

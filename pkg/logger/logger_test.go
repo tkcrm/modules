@@ -3,7 +3,6 @@ package logger_test
 import (
 	"testing"
 
-	"github.com/aws/smithy-go/logging"
 	"github.com/tkcrm/modules/pkg/logger"
 )
 
@@ -26,13 +25,4 @@ func Test_LoggerWith(t *testing.T) {
 	l = l.With("key3", "value3")
 
 	l.Infof("some test value: %d", 1234)
-}
-
-func Test_AWSLogger(t *testing.T) {
-	l := logger.NewAWSLogger(
-		logger.WithAppName("test"),
-		logger.WithLogLevel(logger.LogLevelDebug),
-	)
-
-	l.Logf(logging.Debug, "test: %s", "1234")
 }
