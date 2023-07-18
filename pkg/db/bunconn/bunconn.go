@@ -3,7 +3,6 @@ package bunconn
 import (
 	"database/sql"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/tkcrm/modules/pkg/logger"
 
 	"github.com/uptrace/bun"
@@ -12,26 +11,12 @@ import (
 	"github.com/uptrace/bun/extra/bundebug"
 )
 
-type Config struct {
-	DSN      string `json:"POSTGRES_DSN"`
-	BUNDEBUG bool   `json:"BUNDEBUG" env:"BUNDEBUG"`
-	// In seconds. Default 10 seconds
-	PingInterval int `json:"POSTGRES_PING_INTERVAL" default:"10"`
-}
-
-func (c *Config) Validate() error {
-	return validation.ValidateStruct(
-		c,
-		validation.Field(&c.DSN, validation.Required),
-	)
-}
-
 type BunConn struct {
 	DB *sql.DB
 	bun.IDB
 }
 
-func New(cfg Config, logger logger.Logger) (*BunConn, error) {
+func New(logger logger.Logger, cfg Config) (*BunConn, error) {
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(cfg.DSN)))
 	if err := sqldb.Ping(); err != nil {
 		return nil, err
@@ -49,12 +34,4 @@ func New(cfg Config, logger logger.Logger) (*BunConn, error) {
 	logger.Info("successfully connected to postgres")
 
 	return bunconn, nil
-}
-
-func (s *BunConn) Ping() error {
-	return s.DB.Ping()
-}
-
-func (s *BunConn) Close() error {
-	return s.DB.Close()
 }

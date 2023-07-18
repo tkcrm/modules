@@ -60,7 +60,7 @@ func New(opts ...Option) Logger {
 	return newInternalLogger(opts...)
 }
 
-// NewAWSLogger - init aws compatible logger instance
-func NewAWSLogger(opts ...Option) AWSLogger {
+// NewSugared - init new sugared logger with options
+func NewSugared(opts ...Option) SugaredLogger {
 	return newInternalLogger(opts...)
 }
