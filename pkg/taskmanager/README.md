@@ -3,6 +3,9 @@
 ## Migrations
 
 ```sql
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Task manager jobs
 CREATE TABLE IF NOT EXISTS gue_jobs
 (
     job_id      TEXT        NOT NULL PRIMARY KEY,
@@ -17,5 +20,7 @@ CREATE TABLE IF NOT EXISTS gue_jobs
     updated_at  TIMESTAMPTZ NOT NULL,
     UNIQUE (job_type, queue, args)
 );
-CREATE INDEX IF NOT EXISTS idx_gue_jobs_selector ON gue_jobs (queue, run_at, priority);
+CREATE INDEX IF NOT EXISTS gue_jobs_selector_idx ON gue_jobs USING btree (queue, run_at, priority);
+CREATE INDEX IF NOT EXISTS gue_jobs_selector2_idx ON gue_jobs USING btree (queue, priority);
+CREATE INDEX IF NOT EXISTS gue_jobs_queue_idx ON gue_jobs USING btree (queue);
 ```
