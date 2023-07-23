@@ -7,7 +7,7 @@ require (
 	github.com/cristalhq/aconfig/aconfigdotenv v0.17.1
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v5 v5.4.2
-	github.com/nats-io/nats.go v1.27.1
+	github.com/nats-io/nats.go v1.28.0
 	github.com/pkg/errors v0.9.1
 	github.com/redis/go-redis/v9 v9.0.5
 	github.com/stretchr/testify v1.8.4
@@ -58,7 +58,7 @@ require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/gobeam/stringy v0.0.6
 	github.com/goccy/go-json v0.10.2
-	github.com/huandu/go-sqlbuilder v1.21.0
+	github.com/huandu/go-sqlbuilder v1.22.0
 	github.com/nats-io/nats-server/v2 v2.9.11 // indirect
 	github.com/nats-io/nkeys v0.4.4 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
