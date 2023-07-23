@@ -3,14 +3,14 @@ package templates
 import (
 	"bufio"
 	"bytes"
+	"fmt"
+
 	htmlTemplate "html/template"
 	textTemplate "text/template"
-
-	"github.com/pkg/errors"
 )
 
 var (
-	errExecuteTemplateStr = "execute template error"
+	errExecuteTemplateStr = "execute template error: %w"
 	defaultTplName        = "name"
 )
 
@@ -33,7 +33,7 @@ func (t *templates) Compile(params CompileParams) ([]byte, error) {
 		)
 
 		if err := tpl.ExecuteTemplate(w, params.TemplateName, params.Data); err != nil {
-			return nil, errors.Wrap(err, errExecuteTemplateStr)
+			return nil, fmt.Errorf(errExecuteTemplateStr, err)
 		}
 	} else {
 		tpl := htmlTemplate.Must(
@@ -46,7 +46,7 @@ func (t *templates) Compile(params CompileParams) ([]byte, error) {
 		)
 
 		if err := tpl.ExecuteTemplate(w, params.TemplateName, params.Data); err != nil {
-			return nil, errors.Wrap(err, errExecuteTemplateStr)
+			return nil, fmt.Errorf(errExecuteTemplateStr, err)
 		}
 	}
 

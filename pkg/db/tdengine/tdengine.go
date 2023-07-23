@@ -2,8 +2,8 @@ package tdengine
 
 import (
 	"database/sql"
+	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/tkcrm/modules/pkg/logger"
 
 	_ "github.com/taosdata/driver-go/v3/taosSql"
@@ -17,7 +17,7 @@ type TDEngine struct {
 func New(logger logger.Logger, cfg Config) (*TDEngine, error) {
 	db, err := sql.Open("taosSql", cfg.DSN)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to connect tdengine")
+		return nil, fmt.Errorf("failed to connect tdengine: %w", err)
 	}
 
 	if err := db.Ping(); err != nil {
