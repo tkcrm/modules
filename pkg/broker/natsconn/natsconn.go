@@ -21,13 +21,15 @@ func New(logger logger.Logger, config Config, appName string, opts ...nats.Optio
 	opts = append(opts, []nats.Option{
 		nats.Name(appName),
 		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
-			logger.Error("nats was disconnected")
+			if err != nil {
+				logger.Errorf("nats was disconnected with err: %v", err)
+			}
 		}),
 		nats.ReconnectHandler(func(nc *nats.Conn) {
 			logger.Warn("nats was reconnected")
 		}),
 		nats.ClosedHandler(func(nc *nats.Conn) {
-			logger.Errorf("nats connection closed. Reason: %q", nc.LastError())
+			logger.Infof("nats connection closed")
 		}),
 		nats.MaxReconnects(-1),
 	}...)
@@ -37,10 +39,8 @@ func New(logger logger.Logger, config Config, appName string, opts ...nats.Optio
 		opts...,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to connect to nats: %v", err)
+		return nil, fmt.Errorf("failed to connect to nats: %w", err)
 	}
-
-	logger.Info("successfully connected to nats")
 
 	return &Nats{
 		connType: ConnTypeDefault,
