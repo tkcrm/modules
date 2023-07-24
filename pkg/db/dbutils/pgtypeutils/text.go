@@ -9,6 +9,13 @@ func EncodeText(value *string) pgtype.Text {
 	}
 	return pgtype.Text{
 		String: v,
-		Valid:  true,
+		Valid:  value != nil,
 	}
+}
+
+func DecodeText(value pgtype.Text) *string {
+	if !value.Valid {
+		return nil
+	}
+	return &value.String
 }
