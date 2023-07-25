@@ -6,8 +6,8 @@ type Config struct {
 	Addr         string `json:"DRAGONFLY_ADDR"`
 	User         string `json:"DRAGONFLY_USER" secret:"true"`
 	Pass         string `json:"DRAGONFLY_PASS" secret:"true"`
-	DbIndex      int    `json:"DRAGONFLY_DB_INDEX"`
-	PingInterval int    `json:"TDENGINE_PING_INTERVAL" default:"10"`
+	DbIndex      int    `json:"DRAGONFLY_DB_INDEX" default:"0"`
+	PingInterval int    `json:"DRAGONFLY_PING_INTERVAL" default:"10"`
 }
 
 func (c *Config) Validate() error {
