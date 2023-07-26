@@ -2,7 +2,17 @@ package logger
 
 import (
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
+
+// WriteSyncer is an io.Writer that can also flush any buffered data. Note
+// that *os.File (and thus, os.Stderr and os.Stdout) implement WriteSyncer.
+// Type alias.
+type WriteSyncer = zapcore.WriteSyncer
+
+// Sink defines the interface to write to and close logger destinations.
+// Type alias.
+type Sink = zap.Sink
 
 type LogFormat string
 
@@ -11,9 +21,13 @@ const (
 	LoggerFormatJSON    LogFormat = "json"
 )
 
+// A SugaredLogger wraps the base Logger functionality in a slower, but less
+// verbose, API. Any Logger can be converted to a SugaredLogger with its Sugar
+// method.
+// Type alias.
 type sugaredLogger = zap.SugaredLogger
 
-type SugaredLogger interface {
+type ExtendedLogger interface {
 	Logger
 	Sugar() *sugaredLogger
 }

@@ -55,6 +55,7 @@ require (
 )
 
 require (
+	github.com/getsentry/sentry-go v0.22.0
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/gobeam/stringy v0.0.6
 	github.com/goccy/go-json v0.10.2
