@@ -16,11 +16,11 @@ func (s *service) RegisterWorkerHandlers(handlers WorkerHandlers) error {
 		}
 
 		if handleFn == nil {
-			return fmt.Errorf("register \"%s\" worker handlers error: empty handle function", name)
+			return fmt.Errorf("register [%s] worker handlers error: empty handle function", name)
 		}
 
 		if err := s.RegisterWorkerHandler(name, handleFn); err != nil {
-			return fmt.Errorf("register \"%s\" worker handler error: %w", name, err)
+			return fmt.Errorf("register [%s] worker handler error: %w", name, err)
 		}
 	}
 
