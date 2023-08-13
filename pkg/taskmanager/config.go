@@ -1,9 +1,7 @@
 package taskmanager
 
-import "time"
-
 type Config struct {
-	ShutdownTime time.Duration `env:"SHUTDOWN_TIME"`
+	//ShutdownTime time.Duration `env:"SHUTDOWN_TIME" example:""`
 }
 
 func (c *Config) Validate() error {

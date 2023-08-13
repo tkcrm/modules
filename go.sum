@@ -51,7 +51,7 @@ github.com/huandu/xstrings v1.3.2/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq
 github.com/huandu/xstrings v1.4.0 h1:D17IlohoQq4UcpqD7fDk80P7l+lwAmlFaBHgOipl2FU=
 github.com/huandu/xstrings v1.4.0/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
 github.com/jackc/chunkreader/v2 v2.0.1 h1:i+RDz65UE+mmpjTfyz0MoVTnzeYxroil2G82ki7MGG8=
-github.com/jackc/pgconn v1.14.0 h1:vrbA9Ud87g6JdFWkHTJXppVce58qPIdP7N8y0Ml/A7Q=
+github.com/jackc/pgconn v1.14.1 h1:smbxIaZA08n6YuxEX1sDyjV/qkbtUtkH20qLkR9MUR4=
 github.com/jackc/pgio v1.0.0 h1:g12B9UwVnzGhueNavwioyEEpAmqMe1E/BN9ES+8ovkE=
 github.com/jackc/pgpassfile v1.0.0 h1:/6Hmqy13Ss2zCq62VdNG8tM1wchn8zjSGOBJ6icpsIM=
 github.com/jackc/pgpassfile v1.0.0/go.mod h1:CEx0iS5ambNFdcRtxPj5JhEz+xB6uRky5eyVu/W2HEg=
@@ -141,8 +141,8 @@ github.com/uptrace/bun/extra/bundebug v1.1.14 h1:9OCGfP9ZDlh41u6OLerWdhBtJAVGXHr
 github.com/uptrace/bun/extra/bundebug v1.1.14/go.mod h1:lto3guzS2v6mnQp1+akyE+ecBLOltevDDe324NXEYdw=
 github.com/vgarvardt/backoff v1.0.0 h1:VKub60RkA/po0gz0fHsr1vWb6pbyvOQpOs/4Ciw4atM=
 github.com/vgarvardt/backoff v1.0.0/go.mod h1:Om8PDVpm4MpRNDg/IKpJWsvS2MabY7LtwSahd09zg8E=
-github.com/vgarvardt/gue/v5 v5.3.0 h1:io8Y6vEDK5PgEZziy7NPtbQ3b2Xe+mXv70ajImAvy+M=
-github.com/vgarvardt/gue/v5 v5.3.0/go.mod h1:Vndr/2INuZqZSLwkWDbYV89h+nsYhIHd07g6Eq7gFoE=
+github.com/vgarvardt/gue/v5 v5.4.0 h1:FMHY76jIv4WV2YOErCMPZ3Q1dHh/7LDx1ISoJlB/8ak=
+github.com/vgarvardt/gue/v5 v5.4.0/go.mod h1:yKgPSkNS4SqYvYPYSvQzz+QdmVZ6KydhSs9Fh+fB3Dk=
 github.com/vmihailenco/msgpack/v5 v5.3.5 h1:5gO0H1iULLWGhs2H5tbAHIZTV8/cYafcFOr9znI5mJU=
 github.com/vmihailenco/msgpack/v5 v5.3.5/go.mod h1:7xyJ9e+0+9SaZT0Wt1RGleJXzli6Q/V5KbhBonMG9jc=
 github.com/vmihailenco/tagparser/v2 v2.0.0 h1:y09buUbR+b5aycVFQs/g70pqKVZNBmxwAhO7/IwNM9g=

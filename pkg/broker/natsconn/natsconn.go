@@ -34,8 +34,12 @@ func New(logger logger.Logger, config Config, appName string, opts ...nats.Optio
 		nats.MaxReconnects(-1),
 	}...)
 
+	if config.User != "" && config.Password != "" {
+		opts = append(opts, nats.UserInfo(config.User, config.Password))
+	}
+
 	nc, err := nats.Connect(
-		config.DSN,
+		config.Addr,
 		opts...,
 	)
 	if err != nil {

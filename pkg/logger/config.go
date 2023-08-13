@@ -3,11 +3,11 @@ package logger
 import validation "github.com/go-ozzo/ozzo-validation/v4"
 
 type Config struct {
-	EncodingConsole bool   `json:"LOG_ENCODING_CONSOLE" env:"ENCODING_CONSOLE" default:"false" usage:"allows to set user-friendly formatting"`
-	Level           string `json:"LOG_LEVEL" env:"LEVEL" default:"info" usage:"allows to set custom logger level"`
-	Trace           string `json:"LOG_TRACE" env:"TRACE" default:"fatal" usage:"allows to set custom trace level"`
-	WithCaller      bool   `json:"LOG_WITH_CALLER" env:"WITH_CALLER" default:"false" usage:"allows to show stack trace"`
-	WithStackTrace  bool   `json:"LOG_WITH_STACK_TRACE" env:"WITH_STACK_TRACE" default:"false" usage:"allows to show stack trace"`
+	EncodingConsole bool   `usage:"allows to set user-friendly formatting"`
+	Level           string `default:"info" usage:"allows to set custom logger level" example:"debug, info, warn, error"`
+	Trace           string `default:"fatal" usage:"allows to set custom trace level"`
+	WithCaller      bool   `usage:"allows to show caller"`
+	WithStackTrace  bool   `usage:"allows to show stack trace"`
 }
 
 func (c *Config) Validate() error {

@@ -69,7 +69,7 @@ require (
 	github.com/uptrace/bun/dialect/pgdialect v1.1.14
 	github.com/uptrace/bun/driver/pgdriver v1.1.14
 	github.com/uptrace/bun/extra/bundebug v1.1.14
-	github.com/vgarvardt/gue/v5 v5.3.0
+	github.com/vgarvardt/gue/v5 v5.4.0
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.12.0 // indirect
 	google.golang.org/protobuf v1.31.0

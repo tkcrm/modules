@@ -3,9 +3,9 @@ package sentry
 import validation "github.com/go-ozzo/ozzo-validation/v4"
 
 type Config struct {
-	DSN         string `json:"SENTRY_DSN"`
-	Environment string `json:"SENTRY_ENVIRONMENT"`
-	Enabled     bool   `json:"SENTRY_ENABLED" default:"true"`
+	DSN         string
+	Environment string
+	Enabled     bool `default:"true"`
 }
 
 func (c *Config) Validate() error {

@@ -3,6 +3,7 @@ package bunconn
 import (
 	"database/sql"
 
+	"github.com/tkcrm/modules/pkg/db/dbutils"
 	"github.com/tkcrm/modules/pkg/logger"
 
 	"github.com/uptrace/bun"
@@ -17,7 +18,9 @@ type BunConn struct {
 }
 
 func New(logger logger.Logger, cfg Config) (*BunConn, error) {
-	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(cfg.DSN)))
+	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(
+		dbutils.PostgresDSN(cfg.Addr, cfg.User, cfg.Password, cfg.DBName),
+	)))
 	if err := sqldb.Ping(); err != nil {
 		return nil, err
 	}

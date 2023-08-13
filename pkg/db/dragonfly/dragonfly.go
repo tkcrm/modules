@@ -16,7 +16,7 @@ func New(ctx context.Context, cfg Config, logger logger.Logger) (*Dragonfly, err
 	conn := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,
 		Username: cfg.User,
-		Password: cfg.Pass,
+		Password: cfg.Password,
 		DB:       cfg.DbIndex,
 	})
 

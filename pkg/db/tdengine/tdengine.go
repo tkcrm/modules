@@ -15,7 +15,12 @@ type TDEngine struct {
 }
 
 func New(logger logger.Logger, cfg Config) (*TDEngine, error) {
-	db, err := sql.Open("taosSql", cfg.DSN)
+	db, err := sql.Open("taosSql",
+		fmt.Sprintf(
+			"%s:%s@tcp(%s)/%s",
+			cfg.User, cfg.Password, cfg.Addr, cfg.DBName,
+		),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect tdengine: %w", err)
 	}
