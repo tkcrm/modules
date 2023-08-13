@@ -1,7 +1,7 @@
 package dragonfly
 
 type Config struct {
-	Addr         string `validate:"required,hostname_port" example:"localhost:5432"`
+	Addr         string `validate:"required,hostname_port" example:"localhost:6379"`
 	User         string
 	Password     string `secret:"true"`
 	DbIndex      int    `validate:"gte=0" default:"0"`

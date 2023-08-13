@@ -1,7 +1,7 @@
 package tdengine
 
 type Config struct {
-	Addr     string `validate:"required,hostname_port" example:"localhost:5432"`
+	Addr     string `validate:"required,hostname_port" example:"localhost:6030"`
 	User     string `validate:"required"`
 	Password string `validate:"required" secret:"true"`
 	DBName   string `validate:"required" env:"DB_NAME"`
