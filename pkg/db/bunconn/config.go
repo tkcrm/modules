@@ -2,7 +2,7 @@ package bunconn
 
 type Config struct {
 	Addr     string `validate:"required,hostname_port" example:"localhost:5432"`
-	User     string `validate:"required"`
+	User     string `validate:"required" secret:"true"`
 	Password string `validate:"required" secret:"true"`
 	DBName   string `validate:"required" env:"DB_NAME"`
 	BUNDEBUG bool   `env:"BUNDEBUG"`
