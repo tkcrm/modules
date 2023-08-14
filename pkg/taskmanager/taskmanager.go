@@ -48,7 +48,7 @@ type service struct {
 	workers        []worker
 }
 
-func New(ctx context.Context, l logger.Logger, psqlPool *pgxpool.Pool) (ITaskmanager, error) {
+func New(l logger.Logger, psqlPool *pgxpool.Pool) (ITaskmanager, error) {
 	poolAdapter := pgxv5.NewConnPool(psqlPool)
 	gc, err := gue.NewClient(poolAdapter)
 	if err != nil {
