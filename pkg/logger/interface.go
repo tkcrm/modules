@@ -64,7 +64,7 @@ type Logger interface {
 	Panicf(template string, args ...any)
 	Panicw(msg string, keysAndValues ...any)
 
-	With(...any) Logger
+	//With(...any) Logger
 
 	Sync() error
 }

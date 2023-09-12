@@ -25,14 +25,14 @@ func TestLogger(t *testing.T) {
 	l.Info("Hello world")
 }
 
-func Test_LoggerWith(t *testing.T) {
-	l := logger.New(
-		logger.WithAppName("test app name"),
-		logger.WithLogLevel(logger.LogLevelDebug),
-		logger.WithLogFormat(logger.LoggerFormatConsole),
-	).With("key", "value").With("key2", "value2")
+// func Test_LoggerWith(t *testing.T) {
+// 	l := logger.New(
+// 		logger.WithAppName("test app name"),
+// 		logger.WithLogLevel(logger.LogLevelDebug),
+// 		logger.WithLogFormat(logger.LoggerFormatConsole),
+// 	).With("key", "value").With("key2", "value2")
 
-	l = l.With("key3", "value3")
+// 	l = l.With("key3", "value3")
 
-	l.Infof("some test value: %d", 1234)
-}
+// 	l.Infof("some test value: %d", 1234)
+// }
