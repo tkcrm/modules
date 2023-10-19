@@ -60,7 +60,7 @@ require (
 	github.com/gobeam/stringy v0.0.6
 	github.com/goccy/go-json v0.10.2
 	github.com/huandu/go-sqlbuilder v1.22.0
-	github.com/nats-io/nats-server/v2 v2.9.11 // indirect
+	github.com/nats-io/nats-server/v2 v2.9.23 // indirect
 	github.com/nats-io/nkeys v0.4.4 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/prometheus/client_golang v1.16.0
