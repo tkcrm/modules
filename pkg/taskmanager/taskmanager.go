@@ -2,175 +2,83 @@ package taskmanager
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"strings"
-	"sync"
-	"time"
 
 	"github.com/goccy/go-json"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/tkcrm/modules/pkg/logger"
-	"github.com/vgarvardt/gue/v5"
-	"github.com/vgarvardt/gue/v5/adapter/pgxv5"
-	"golang.org/x/sync/errgroup"
+	"github.com/hibiken/asynq"
 )
 
-const (
-	DefaultQueueName                    = "default"
-	defaultGracefulShutdownTimeDuration = time.Second * 20
-)
+type taskmanager struct {
+	logger logger
+	config Config
 
-type ITaskmanager interface {
-	Name() string
-	Start(ctx context.Context) error
-	Stop(ctx context.Context) error
-	RegisterWorkerHandler(name string, fn HandlerFunc) error
-	RegisterWorkerHandlers(handlers WorkerHandlers) error
-	RegisterWorker(poolSize int, queueName string)
-	AddTask(taskType string, payload any, opts ...Option) error
-	CleanTableIndexes(ctx context.Context) error
-	IsStarted() bool
+	srv      *asynq.Server
+	client   *asynq.Client
+	handlers *asynq.ServeMux
 }
 
-type service struct {
-	logger logger.Logger
-	gc     *gue.Client
-	db     *pgxpool.Pool
+func New(logger logger, config Config) ITaskmanager {
+	if config.ServerConfig.ShutdownTimeout == 0 {
+		config.ServerConfig.ShutdownTimeout = defaultGracefulShutdownTimeDuration
+	}
+	config.ServerConfig.Logger = logger
 
-	ctx         context.Context
-	stopChan    chan struct{}
-	stoppedChan chan struct{}
-	started     bool
-	blocked     bool
+	redisConfig := asynq.RedisClientOpt{
+		Addr:     config.RedisConfig.Addr,
+		Username: config.RedisConfig.Username,
+		Password: config.RedisConfig.Password,
+		DB:       config.RedisConfig.DB,
+	}
 
-	mu             sync.RWMutex
-	workerHandlers gue.WorkMap
-	workers        []worker
+	tm := &taskmanager{
+		logger: logger,
+		config: config,
+		srv: asynq.NewServer(
+			redisConfig,
+			config.ServerConfig.Config,
+		),
+		client:   asynq.NewClient(redisConfig),
+		handlers: asynq.NewServeMux(),
+	}
+
+	return tm
 }
 
-func New(l logger.Logger, psqlPool *pgxpool.Pool) (ITaskmanager, error) {
-	poolAdapter := pgxv5.NewConnPool(psqlPool)
-	gc, err := gue.NewClient(poolAdapter)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create gue client: %w", err)
+// Name return name of the service
+func (s taskmanager) Name() string {
+	if s.config.Name == "" {
+		return defaultName
 	}
-
-	return &service{
-		logger:         l,
-		gc:             gc,
-		db:             psqlPool,
-		workerHandlers: make(gue.WorkMap),
-		workers:        make([]worker, 0),
-	}, nil
+	return s.config.Name
 }
 
-// Name return name of service
-func (s *service) Name() string { return "taskmanager" }
+// Start task manager server
+func (s *taskmanager) Start(ctx context.Context) error {
+	if err := s.srv.Start(s.handlers); err != nil {
+		return fmt.Errorf("failed to run task manager server: %w", err)
+	}
+	return nil
+}
 
-// Start task manager
-func (s *service) Start(ctx context.Context) error {
-	// skip if service already started
-	if s.IsStarted() {
-		return nil
+// Stop task manager server and client
+func (s *taskmanager) Stop(ctx context.Context) error {
+	// stop client
+	if err := s.client.Close(); err != nil {
+		s.logger.Errorf("failed to stop [%s] client: %s", s.Name(), err)
 	}
 
-	s.setIsStarted(true)
-	defer s.setIsStarted(false)
+	// stop server
+	s.srv.Stop()
 
-	s.ctx = ctx
-
-	// local context for graceful shutdown
-	gracafulCtx, shutdown := context.WithCancel(context.Background())
-	defer shutdown()
-
-	g, groupCtx := errgroup.WithContext(gracafulCtx)
-	for _, w := range s.workers {
-		gueWorker, err := gue.NewWorkerPool(
-			s.gc, s.workerHandlers, w.poolSize,
-			gue.WithPoolQueue(w.queueName),
-			gue.WithPoolPollInterval(time.Second),
-		)
-		if err != nil {
-			return fmt.Errorf("gue NewWorkerPool error: %w", err)
-		}
-
-		g.Go(func() error {
-			if err := gueWorker.Run(groupCtx); err != nil {
-				return err
-			}
-
-			return nil
-		})
-	}
-
-	s.logger.Info("task manager started")
-
-	// waiting for stop signal
-	s.stopChan = make(chan struct{}, 1)
-
-	// signaling that service was stopped
-	s.stoppedChan = make(chan struct{}, 1)
-	defer func() {
-		s.stoppedChan <- struct{}{}
-	}()
-
-	// errors workers channel
-	groupErrChan := make(chan error, 1)
-
-	// waiting for errors from workers
-	go func() {
-		groupErrChan <- g.Wait()
-	}()
-
-	select {
-	case err := <-groupErrChan:
-		if err != nil {
-			return err
-		}
-	case <-s.stopChan:
-	case <-gracafulCtx.Done():
-	case <-ctx.Done():
-	}
-
-	shutdown()
-
-	select {
-	case <-time.After(defaultGracefulShutdownTimeDuration):
-	case <-gracafulCtx.Done():
-	}
-
-	s.logger.Info("task manager stopped")
+	// graceful shutdown the server
+	s.srv.Shutdown()
 
 	return nil
 }
 
-// Stop task manager
-func (s *service) Stop(ctx context.Context) error {
-	// skip if service not running
-	if !s.IsStarted() {
-		return nil
-	}
-
-	// send stop signal
-	s.stopChan <- struct{}{}
-
-	// waiting for grace stop all tasks
-	select {
-	case <-ctx.Done():
-	case <-s.stoppedChan:
-	}
-
-	return nil
-}
-
-// RegisterWorkerHandler register a new worker handler
-func (s *service) RegisterWorkerHandler(name string, fn HandlerFunc) (err error) {
-	defer func() {
-		if err != nil {
-			err = fmt.Errorf("register [%s] worker handler error: %w", name, err)
-		}
-	}()
-
+// RegisterWorkerHandler register new handler for task
+func (s *taskmanager) RegisterWorkerHandler(name string, fn HandlerFunc) error {
 	if name == "" {
 		return fmt.Errorf("empty handler name")
 	}
@@ -179,64 +87,77 @@ func (s *service) RegisterWorkerHandler(name string, fn HandlerFunc) (err error)
 		return fmt.Errorf("empty handler func")
 	}
 
-	if _, ok := s.workerHandlers[name]; ok {
-		return fmt.Errorf("worker handler with name [%s] already exists", name)
-	}
-
-	s.mu.Lock()
-	s.workerHandlers[name] = func(ctx context.Context, j *gue.Job) error {
-		return fn(ctx, &Task{j})
-	}
-	s.mu.Unlock()
+	s.handlers.HandleFunc(name, func(ctx context.Context, t *asynq.Task) error {
+		return fn(ctx, &Task{t})
+	})
 
 	return nil
 }
 
-// RegisterWorker register a new worker
-func (s *service) RegisterWorker(poolSize int, queueName string) {
-	if poolSize == 0 {
-		poolSize = 1
+// RegisterWorkerHandlers register new handlers for tasks
+func (s *taskmanager) RegisterWorkerHandlers(handlers WorkerHandlers) error {
+	for name, handleFn := range handlers {
+		if name == "" {
+			return fmt.Errorf("register worker handlers error: empty name")
+		}
+
+		if handleFn == nil {
+			return fmt.Errorf("register [%s] worker handlers error: empty handle function", name)
+		}
+
+		if err := s.RegisterWorkerHandler(name, handleFn); err != nil {
+			return fmt.Errorf("register [%s] worker handler error: %w", name, err)
+		}
 	}
 
-	if queueName == "" {
-		queueName = DefaultQueueName
-	}
-
-	w := worker{
-		poolSize:  poolSize,
-		queueName: queueName,
-	}
-
-	s.mu.Lock()
-	s.workers = append(s.workers, w)
-	s.mu.Unlock()
-
-	s.logger.Debugf("task manager registered worker pool size %d for queue: %s", poolSize, queueName)
+	return nil
 }
 
-// AddTask add a new task to queue
-func (s *service) AddTask(taskType string, payload any, opts ...Option) (err error) {
-	if !s.IsStarted() {
-		return nil
+// AddTask add new task
+func (s *taskmanager) AddTask(name string, payload any, opts ...Option) error {
+	o := &options{
+		queue: defaultQueueName,
 	}
 
-	defer func() {
-		if err != nil && taskType != "" {
-			err = fmt.Errorf("add task [%s] error: %w", taskType, err)
-		}
-	}()
-
-	var options options
 	for _, opt := range opts {
-		opt(&options)
+		opt(o)
 	}
 
-	if taskType == "" {
-		return fmt.Errorf("empty task type")
+	optsAsync := []asynq.Option{}
+	if o.retry != 0 {
+		optsAsync = append(optsAsync, asynq.MaxRetry(o.retry))
 	}
 
-	if options.queueName == "" {
-		options.queueName = DefaultQueueName
+	if o.queue != "" {
+		optsAsync = append(optsAsync, asynq.Queue(o.queue))
+	}
+
+	if o.taskID != "" && !s.config.UniqueTasks {
+		optsAsync = append(optsAsync, asynq.TaskID(o.taskID))
+	}
+
+	if o.timeout != 0 {
+		optsAsync = append(optsAsync, asynq.Timeout(o.timeout))
+	}
+
+	if !o.deadline.IsZero() {
+		optsAsync = append(optsAsync, asynq.Deadline(o.deadline))
+	}
+
+	if o.uniqueTTL != 0 {
+		optsAsync = append(optsAsync, asynq.Unique(o.uniqueTTL))
+	}
+
+	if !o.processAt.IsZero() {
+		optsAsync = append(optsAsync, asynq.ProcessAt(o.processAt))
+	}
+
+	if o.retention != 0 {
+		optsAsync = append(optsAsync, asynq.Retention(o.retention))
+	}
+
+	if o.group != "" {
+		optsAsync = append(optsAsync, asynq.Group(o.group))
 	}
 
 	var payloadBytes []byte
@@ -247,95 +168,31 @@ func (s *service) AddTask(taskType string, payload any, opts ...Option) (err err
 		case string:
 			payloadBytes = []byte(t)
 		default:
-			if options.jsonPayload {
+			if o.jsonPayload {
 				pb, err := json.Marshal(payload)
 				if err != nil {
-					return err
+					return fmt.Errorf("marshal json payload error: %w", err)
 				}
 				payloadBytes = pb
 			} else {
-				return fmt.Errorf("bad payload type \"%T\" for task %s", t, taskType)
+				return fmt.Errorf("bad payload type \"%T\" for task %s", t, name)
 			}
 		}
 	}
 
-	t := &gue.Job{
-		Type:  taskType,
-		Args:  payloadBytes,
-		Queue: options.queueName,
+	if s.config.UniqueTasks {
+		taskID := genTaskID(fmt.Sprintf("%s-%s", o.queue, name), payloadBytes)
+		optsAsync = append(optsAsync, asynq.TaskID(taskID))
 	}
 
-	if !options.runAt.IsZero() {
-		t.RunAt = options.runAt
-	}
-
-	if options.priority != 0 {
-		t.Priority = gue.JobPriority(options.priority)
-	}
-
-	if err := s.gc.Enqueue(s.ctx, t); err != nil {
-		if strings.Contains(err.Error(), "SQLSTATE 23505") {
+	task := asynq.NewTask(name, payloadBytes, optsAsync...)
+	if _, err := s.client.Enqueue(task); err != nil {
+		if errors.Is(err, asynq.ErrDuplicateTask) ||
+			errors.Is(err, asynq.ErrTaskIDConflict) {
 			return nil
 		}
-		return fmt.Errorf("failed to enqueue job: %w", err)
+		return fmt.Errorf("enqueue new task error: %w", err)
 	}
 
 	return nil
-}
-
-func (s *service) CleanTableIndexes(ctx context.Context) error {
-	s.mu.Lock()
-	if s.blocked {
-		s.mu.Unlock()
-		return nil
-	}
-	s.blocked = true
-	s.mu.Unlock()
-
-	defer func() {
-		s.mu.Lock()
-		s.blocked = false
-		s.mu.Unlock()
-	}()
-
-	if !s.IsStarted() {
-		return nil
-	}
-
-	s.logger.Info("start cleaning the job table")
-
-	// stop task manager
-	if err := s.Stop(ctx); err != nil {
-		return fmt.Errorf("failed to stop task manager: %w", err)
-	}
-
-	now := time.Now()
-
-	// clean table
-	if _, err := s.db.Exec(ctx, "VACUUM FULL VERBOSE gue_jobs;"); err != nil {
-		return fmt.Errorf("db execute error: %w", err)
-	}
-
-	s.logger.Infof("table gue_job successfully cleaned in: %s", time.Since(now))
-
-	// start task manager
-	go func() {
-		if err := s.Start(ctx); err != nil {
-			s.logger.Fatalf("failed to start task manager: %s", err)
-		}
-	}()
-
-	return nil
-}
-
-func (s *service) IsStarted() bool {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	return s.started
-}
-
-func (s *service) setIsStarted(v bool) {
-	s.mu.Lock()
-	s.started = v
-	s.mu.Unlock()
 }

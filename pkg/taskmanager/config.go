@@ -1,9 +1,30 @@
 package taskmanager
 
+import (
+	"time"
+
+	"github.com/hibiken/asynq"
+)
+
+const (
+	defaultName                         = "taskmanager"
+	defaultGracefulShutdownTimeDuration = time.Second * 20
+)
+
 type Config struct {
-	//ShutdownTime time.Duration `env:"SHUTDOWN_TIME" example:""`
+	Name         string
+	UniqueTasks  bool
+	RedisConfig  RedisConfig
+	ServerConfig ServerConfig
 }
 
-func (c *Config) Validate() error {
-	return nil
+type RedisConfig struct {
+	Addr     string
+	Username string
+	Password string
+	DB       int
+}
+
+type ServerConfig struct {
+	asynq.Config
 }
