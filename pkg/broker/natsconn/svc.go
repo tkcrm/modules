@@ -7,12 +7,12 @@ func (s *Nats) Name() string { return "nats" }
 func (s *Nats) Start(_ context.Context) error { return nil }
 
 func (s *Nats) Stop(_ context.Context) error {
-	if s.connType == ConnTypeDefault {
-		s.conn.Close()
+	if s.ConnType == ConnTypeDefault {
+		s.Conn.Close()
 	}
 
-	if s.connType == ConnTypeEncoded {
-		s.encodedConn.Close()
+	if s.ConnType == ConnTypeEncoded {
+		s.EncodedConn.Close()
 	}
 
 	return nil

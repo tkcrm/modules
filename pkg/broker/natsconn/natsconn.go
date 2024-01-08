@@ -8,9 +8,9 @@ import (
 )
 
 type Nats struct {
-	connType    ConnType
-	conn        *nats.Conn
-	encodedConn *nats.EncodedConn
+	ConnType    ConnType
+	Conn        *nats.Conn
+	EncodedConn *nats.EncodedConn
 }
 
 func New(logger logger.Logger, config Config, appName string, opts ...nats.Option) (*Nats, error) {
@@ -47,8 +47,8 @@ func New(logger logger.Logger, config Config, appName string, opts ...nats.Optio
 	}
 
 	return &Nats{
-		connType: ConnTypeDefault,
-		conn:     nc,
+		ConnType: ConnTypeDefault,
+		Conn:     nc,
 	}, nil
 }
 
@@ -62,8 +62,8 @@ func NewEncoded(logger logger.Logger, config Config, appName string, encType Nat
 		return nil, err
 	}
 
-	nc.connType = ConnTypeEncoded
-	nc.encodedConn, err = nats.NewEncodedConn(nc.conn, string(encType))
+	nc.ConnType = ConnTypeEncoded
+	nc.EncodedConn, err = nats.NewEncodedConn(nc.Conn, string(encType))
 	if err != nil {
 		return nil, err
 	}
