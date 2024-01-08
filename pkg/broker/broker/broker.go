@@ -21,6 +21,9 @@ func (b *Broker[T]) Start() {
 	for {
 		select {
 		case <-b.stopCh:
+			for msgCh := range subs {
+				close(msgCh)
+			}
 			return
 		case msgCh := <-b.subCh:
 			subs[msgCh] = struct{}{}
@@ -43,7 +46,7 @@ func (b *Broker[T]) Stop() {
 }
 
 func (b *Broker[T]) Subscribe() chan T {
-	msgCh := make(chan T, 5)
+	msgCh := make(chan T)
 	b.subCh <- msgCh
 	return msgCh
 }
