@@ -1,36 +1,12 @@
 package utils_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tkcrm/modules/pkg/utils"
 )
-
-func Test_ExistInArray(t *testing.T) {
-	tt := []struct {
-		arr      []string
-		value    string
-		expected bool
-	}{
-		{
-			arr:      []string{"A", "B", "C"},
-			value:    "C",
-			expected: true,
-		},
-		{
-			arr:      []string{"A", "B", "C"},
-			value:    "D",
-			expected: false,
-		},
-	}
-
-	for index, ts := range tt {
-		if utils.ExistInArray(ts.arr, ts.value) != ts.expected {
-			t.Fatalf("%d test error:", index)
-		}
-	}
-}
 
 func Test_FilterArray(t *testing.T) {
 	tests := []struct {
@@ -130,8 +106,8 @@ func Test_FindInArray(t *testing.T) {
 		},
 	}
 
-	t.Run("", func(t *testing.T) {
-		for _, tc := range tests {
+	for _, tc := range tests {
+		t.Run("", func(t *testing.T) {
 			_, ok := utils.FindInArray(tc.in, func(v inItem) bool {
 				return v.key > 5
 			})
@@ -139,6 +115,43 @@ func Test_FindInArray(t *testing.T) {
 			if ok != tc.expected {
 				t.Fatal("fail")
 			}
-		}
-	})
+		})
+	}
+}
+
+func TestGenerateRandomNumber(t *testing.T) {
+	tests := []struct {
+		length uint
+		min    int
+		max    int
+	}{
+		{
+			length: 1,
+			min:    1,
+			max:    9,
+		},
+		{
+			length: 2,
+			min:    10,
+			max:    99,
+		},
+		{
+			length: 6,
+			min:    100000,
+			max:    999999,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run("", func(t *testing.T) {
+			res := utils.GenerateRandomNumber(tc.length)
+			if res < tc.min {
+				t.Fatal("less")
+			}
+			if res > tc.max {
+				t.Fatal("greater")
+			}
+			fmt.Println(res)
+		})
+	}
 }

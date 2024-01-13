@@ -1,12 +1,11 @@
 package utils
 
 import (
-	"crypto/rand"
 	"math"
 	"reflect"
 	"runtime"
+	"slices"
 	"strings"
-	"unsafe"
 
 	"github.com/goccy/go-json"
 )
@@ -40,15 +39,6 @@ func GetDefaultNumber[T Number](value, defaultValue T) T {
 	return value
 }
 
-func ExistInArray[T comparable](arr []T, value T) bool {
-	for _, v := range arr {
-		if v == value {
-			return true
-		}
-	}
-	return false
-}
-
 func FindInArray[T any](values []T, fn func(v T) bool) (T, bool) {
 	for _, item := range values {
 		if fn(item) {
@@ -64,7 +54,7 @@ func FindInArray[T any](values []T, fn func(v T) bool) (T, bool) {
 func FilterValues[T comparable](values []T, filterValues []T) []T {
 	result := []T{}
 	for _, item := range values {
-		if !ExistInArray(filterValues, item) {
+		if !slices.Contains(filterValues, item) {
 			result = append(result, item)
 		}
 	}
@@ -108,32 +98,9 @@ func BytesToStruct[T any](data []byte) (T, error) {
 }
 
 // GetFunctionName return caller function name
-func GetFunctionName(temp interface{}) string {
+func GetFunctionName(temp any) string {
 	strs := strings.Split((runtime.FuncForPC(reflect.ValueOf(temp).Pointer()).Name()), ".")
 	funcName := strs[len(strs)-1]
 	strs = strings.Split(funcName, "-")
 	return strs[0]
-}
-
-var numbers = []byte("0123456789")
-var alphabet = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-var symbols = []byte("[]/-()%#@")
-
-// GenerateRandomString
-func GenerateRandomString(size int, includeNumbers bool, includeSymbols bool) string {
-	str := alphabet
-	if includeNumbers {
-		str = append(str, numbers...)
-	}
-	if includeSymbols {
-		str = append(str, symbols...)
-	}
-
-	b := make([]byte, size)
-	rand.Read(b)
-	for i := 0; i < size; i++ {
-		b[i] = str[b[i]%byte(len(str))]
-	}
-
-	return *(*string)(unsafe.Pointer(&b))
 }
