@@ -7,9 +7,11 @@ import (
 	"unsafe"
 )
 
-var numbers = []byte("0123456789")
-var alphabet = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-var symbols = []byte("[]/-()%#@")
+var (
+	numbers  = []byte("0123456789")
+	alphabet = []byte("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	symbols  = []byte("[]/-()%#@")
+)
 
 // GenerateRandomString
 func GenerateRandomString(length int, includeNumbers bool, includeSymbols bool) string {

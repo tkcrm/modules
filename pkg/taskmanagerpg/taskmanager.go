@@ -3,10 +3,9 @@ package taskmanagerpg
 import (
 	"context"
 	"fmt"
-	"time"
-
 	"strings"
 	"sync"
+	"time"
 
 	"golang.org/x/sync/errgroup"
 

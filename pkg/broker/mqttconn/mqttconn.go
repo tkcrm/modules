@@ -1,4 +1,3 @@
 package mqttconn
 
-type Mqtt struct {
-}
+type Mqtt struct{}

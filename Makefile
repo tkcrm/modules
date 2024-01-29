@@ -4,3 +4,6 @@ upgrade:
 
 test:
 	go test ./...
+
+fmt:
+	@gofumpt -l -w .
