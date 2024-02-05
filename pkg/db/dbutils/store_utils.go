@@ -6,7 +6,7 @@ type FindResponse[T any] struct {
 
 type FindResponseWithPaginator[T any] struct {
 	Items     []T       `json:"items"`
-	Pagniator Pagniator `json:"pagination"`
+	Paginator Paginator `json:"pagination"`
 }
 
 type PageParams struct {

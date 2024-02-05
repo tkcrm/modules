@@ -6,7 +6,7 @@ import (
 
 var maxVisiblePages = 5
 
-type Pagniator struct {
+type Paginator struct {
 	page       int
 	pageSize   int
 	totalItems int
@@ -15,45 +15,52 @@ type Pagniator struct {
 	maxPages   int
 }
 
-func New(page, pageSize, totalItems int) Pagniator {
+func New(page, pageSize, totalItems int, opts ...PaginatorOption) Paginator {
 	total := totalItems / pageSize
 	if totalItems%pageSize > 0 {
 		total++
 	}
-	return Pagniator{
+
+	p := Paginator{
 		page:       page,
 		pageSize:   pageSize,
 		totalItems: totalItems,
 		totalPages: total,
 		maxPages:   maxVisiblePages,
 	}
+
+	for _, opt := range opts {
+		opt(&p)
+	}
+
+	return p
 }
 
-func (p Pagniator) CurrentPage() int {
+func (p Paginator) CurrentPage() int {
 	return p.page
 }
 
-func (p Pagniator) PageSize() int {
+func (p Paginator) PageSize() int {
 	return p.pageSize
 }
 
-func (p Pagniator) TotalItems() int {
+func (p Paginator) TotalItems() int {
 	return p.totalItems
 }
 
-func (p Pagniator) HasPrevious() bool {
+func (p Paginator) HasPrevious() bool {
 	return p.page > 1
 }
 
-func (p Pagniator) HasNext() bool {
+func (p Paginator) HasNext() bool {
 	return p.page < p.totalPages
 }
 
-func (p Pagniator) HasPages() bool {
+func (p Paginator) HasPages() bool {
 	return p.totalPages > 1
 }
 
-func (p Pagniator) Previous() *int {
+func (p Paginator) Previous() *int {
 	if !p.HasPrevious() {
 		return nil
 	}
@@ -61,7 +68,7 @@ func (p Pagniator) Previous() *int {
 	return &res
 }
 
-func (p Pagniator) Next() *int {
+func (p Paginator) Next() *int {
 	if !p.HasNext() {
 		return nil
 	}
@@ -69,26 +76,26 @@ func (p Pagniator) Next() *int {
 	return &res
 }
 
-func (p Pagniator) First() int {
+func (p Paginator) First() int {
 	return 1
 }
 
-func (p Pagniator) Last() int {
+func (p Paginator) Last() int {
 	return p.TotalPages()
 }
 
-func (p Pagniator) TotalPages() int {
+func (p Paginator) TotalPages() int {
 	return p.totalPages
 }
 
-func (p Pagniator) CurrentPageFromItem() int {
+func (p Paginator) CurrentPageFromItem() int {
 	if p.page == 1 {
 		return 1
 	}
 	return (p.page-1)*p.pageSize + 1
 }
 
-func (p Pagniator) CurrentPageToItem() int {
+func (p Paginator) CurrentPageToItem() int {
 	if p.page == 1 {
 		res := p.pageSize
 		if res > p.totalItems {
@@ -111,7 +118,7 @@ type DrawPagesItem struct {
 	ClassName  string
 }
 
-func (p Pagniator) DrawPages() []*DrawPagesItem {
+func (p Paginator) DrawPages() []*DrawPagesItem {
 	half := int(math.Floor(float64(p.maxPages) / 2))
 	lastPage := p.maxPages
 

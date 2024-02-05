@@ -10,13 +10,13 @@ import (
 func TestPaginator(t *testing.T) {
 	tests := []struct {
 		page, pageSize, totalItems int
-		expexted                   []dbutils.DrawPagesItem
+		expexted                   []*dbutils.DrawPagesItem
 	}{
 		{
 			page:       1,
 			pageSize:   3,
 			totalItems: 20,
-			expexted: []dbutils.DrawPagesItem{
+			expexted: []*dbutils.DrawPagesItem{
 				{
 					PageNumber: 1,
 					IsActive:   true,
@@ -33,7 +33,7 @@ func TestPaginator(t *testing.T) {
 			page:       2,
 			pageSize:   3,
 			totalItems: 20,
-			expexted: []dbutils.DrawPagesItem{
+			expexted: []*dbutils.DrawPagesItem{
 				{
 					PageNumber: 1,
 				},
@@ -50,7 +50,7 @@ func TestPaginator(t *testing.T) {
 			page:       3,
 			pageSize:   3,
 			totalItems: 20,
-			expexted: []dbutils.DrawPagesItem{
+			expexted: []*dbutils.DrawPagesItem{
 				{
 					PageNumber: 2,
 				},
@@ -64,18 +64,18 @@ func TestPaginator(t *testing.T) {
 			},
 		},
 		{
-			page:       6,
+			page:       7,
 			pageSize:   3,
 			totalItems: 20,
-			expexted: []dbutils.DrawPagesItem{
-				{
-					PageNumber: 4,
-				},
+			expexted: []*dbutils.DrawPagesItem{
 				{
 					PageNumber: 5,
 				},
 				{
 					PageNumber: 6,
+				},
+				{
+					PageNumber: 7,
 					IsActive:   true,
 				},
 			},
@@ -84,7 +84,7 @@ func TestPaginator(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run("", func(t *testing.T) {
-			p := dbutils.New(tc.page, tc.pageSize, tc.totalItems)
+			p := dbutils.New(tc.page, tc.pageSize, tc.totalItems, dbutils.WithMaxVisibleItems(3))
 			res := p.DrawPages()
 			assert.Equal(t, tc.expexted, res)
 		})
