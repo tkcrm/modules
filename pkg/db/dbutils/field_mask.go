@@ -32,3 +32,7 @@ func (s FieldMask) Items() []string {
 func (s FieldMask) Len() int {
 	return len(s)
 }
+
+func (s FieldMask) Contains(v string) bool {
+	return slices.Contains(s, v)
+}
