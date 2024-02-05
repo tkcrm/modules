@@ -7,7 +7,7 @@ require (
 	github.com/cristalhq/aconfig/aconfigdotenv v0.17.1
 	github.com/google/uuid v1.6.0
 	github.com/hibiken/asynq v0.24.1
-	github.com/jackc/pgx/v5 v5.5.2
+	github.com/jackc/pgx/v5 v5.5.3
 	github.com/nats-io/nats.go v1.32.0
 	github.com/redis/go-redis/v9 v9.4.0
 	github.com/stretchr/testify v1.8.4
@@ -66,7 +66,7 @@ require (
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/prometheus/client_golang v1.18.0
-	github.com/taosdata/driver-go/v3 v3.5.1
+	github.com/taosdata/driver-go/v3 v3.5.2
 	github.com/ulule/limiter/v3 v3.11.2
 	github.com/uptrace/bun/dialect/pgdialect v1.1.17
 	github.com/uptrace/bun/driver/pgdriver v1.1.17
