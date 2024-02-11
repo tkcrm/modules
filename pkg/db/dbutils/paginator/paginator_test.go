@@ -1,22 +1,22 @@
-package dbutils_test
+package paginator_test
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/tkcrm/modules/pkg/db/dbutils"
+	"github.com/tkcrm/modules/pkg/db/dbutils/paginator"
 )
 
 func TestPaginator(t *testing.T) {
 	tests := []struct {
 		page, pageSize, totalItems int
-		expexted                   []*dbutils.DrawPagesItem
+		expexted                   []*paginator.DrawPagesItem
 	}{
 		{
 			page:       1,
 			pageSize:   3,
 			totalItems: 20,
-			expexted: []*dbutils.DrawPagesItem{
+			expexted: []*paginator.DrawPagesItem{
 				{
 					PageNumber: 1,
 					IsActive:   true,
@@ -33,7 +33,7 @@ func TestPaginator(t *testing.T) {
 			page:       2,
 			pageSize:   3,
 			totalItems: 20,
-			expexted: []*dbutils.DrawPagesItem{
+			expexted: []*paginator.DrawPagesItem{
 				{
 					PageNumber: 1,
 				},
@@ -50,7 +50,7 @@ func TestPaginator(t *testing.T) {
 			page:       3,
 			pageSize:   3,
 			totalItems: 20,
-			expexted: []*dbutils.DrawPagesItem{
+			expexted: []*paginator.DrawPagesItem{
 				{
 					PageNumber: 2,
 				},
@@ -67,7 +67,7 @@ func TestPaginator(t *testing.T) {
 			page:       7,
 			pageSize:   3,
 			totalItems: 20,
-			expexted: []*dbutils.DrawPagesItem{
+			expexted: []*paginator.DrawPagesItem{
 				{
 					PageNumber: 5,
 				},
@@ -84,7 +84,7 @@ func TestPaginator(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run("", func(t *testing.T) {
-			p := dbutils.New(tc.page, tc.pageSize, tc.totalItems, dbutils.WithMaxVisibleItems(3))
+			p := paginator.New(tc.page, tc.pageSize, tc.totalItems, paginator.WithMaxVisibleItems(3))
 			res := p.DrawPages()
 			assert.Equal(t, tc.expexted, res)
 		})

@@ -1,12 +1,14 @@
 package dbutils
 
+import "github.com/tkcrm/modules/pkg/db/dbutils/paginator"
+
 type FindResponse[T any] struct {
 	Items []T `json:"items"`
 }
 
 type FindResponseWithPaginator[T any] struct {
-	Items     []T       `json:"items"`
-	Paginator Paginator `json:"pagination"`
+	Items     []T                 `json:"items"`
+	Paginator paginator.Paginator `json:"pagination"`
 }
 
 type PageParams struct {

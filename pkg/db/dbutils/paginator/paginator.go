@@ -1,4 +1,4 @@
-package dbutils
+package paginator
 
 import (
 	"math"
@@ -15,7 +15,7 @@ type Paginator struct {
 	maxPages   int
 }
 
-func New(page, pageSize, totalItems int, opts ...PaginatorOption) Paginator {
+func New(page, pageSize, totalItems int, opts ...Option) Paginator {
 	total := totalItems / pageSize
 	if totalItems%pageSize > 0 {
 		total++
