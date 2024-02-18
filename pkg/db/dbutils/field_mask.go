@@ -2,11 +2,11 @@ package dbutils
 
 import "slices"
 
-type FieldMask []string
+type FieldMask[T ~string] []T
 
-func (s *FieldMask) Add(items ...string) []string {
+func (s *FieldMask[T]) Add(items ...T) []T {
 	if s == nil {
-		*s = make([]string, 0)
+		*s = make([]T, 0)
 	}
 
 	if len(items) == 0 {
@@ -22,17 +22,17 @@ func (s *FieldMask) Add(items ...string) []string {
 	return *s
 }
 
-func (s FieldMask) Items() []string {
+func (s FieldMask[T]) Items() []T {
 	if s == nil {
-		return FieldMask{}
+		return FieldMask[T]{}
 	}
 	return s
 }
 
-func (s FieldMask) Len() int {
+func (s FieldMask[T]) Len() int {
 	return len(s)
 }
 
-func (s FieldMask) Contains(v string) bool {
+func (s FieldMask[T]) Contains(v T) bool {
 	return slices.Contains(s, v)
 }
