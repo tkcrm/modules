@@ -36,3 +36,11 @@ func (s FieldMask[T]) Len() int {
 func (s FieldMask[T]) Contains(v T) bool {
 	return slices.Contains(s, v)
 }
+
+func FieldMaskFromStrings[T ~string](s []string) FieldMask[T] {
+	res := make([]T, len(s))
+	for i, v := range s {
+		res[i] = T(v)
+	}
+	return res
+}
