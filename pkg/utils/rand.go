@@ -3,7 +3,7 @@ package utils
 import (
 	"crypto/rand"
 	"math"
-	mrand "math/rand"
+	mrand "math/rand/v2"
 	"unsafe"
 )
 
@@ -42,5 +42,5 @@ func GenerateRandomNumber(length uint) int {
 		max = min*10 - 1
 	}
 
-	return mrand.Intn(max-min) + min
+	return mrand.IntN(max-min) + min
 }
