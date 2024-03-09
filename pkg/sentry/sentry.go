@@ -36,7 +36,13 @@ func InitSentryForZap(cfg Config, opts ...Option) (zap.Option, error) {
 
 	return zap.Hooks(func(entry zapcore.Entry) error {
 		if entry.Level >= zapcore.ErrorLevel {
-			sentry.CaptureMessage(entry.Message)
+			e := sentry.NewEvent()
+			e.Timestamp = entry.Time
+			e.Message = entry.Message
+			e.Level = sentry.Level(entry.Level.String())
+			e.Logger = entry.LoggerName
+			e.Environment = cfg.Environment
+			sentry.CaptureEvent(e)
 		}
 
 		return nil
