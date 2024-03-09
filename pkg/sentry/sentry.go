@@ -38,10 +38,17 @@ func InitSentryForZap(cfg Config, opts ...Option) (zap.Option, error) {
 		if entry.Level >= zapcore.ErrorLevel {
 			e := sentry.NewEvent()
 			e.Timestamp = entry.Time
-			e.Message = entry.Message
+			e.Message = fmt.Sprintf(
+				"%s\n\n%s, Line No: %d :: stack:\n%s",
+				entry.Message,
+				entry.Caller.File,
+				entry.Caller.Line,
+				entry.Stack,
+			)
 			e.Level = sentry.Level(entry.Level.String())
 			e.Logger = entry.LoggerName
 			e.Environment = cfg.Environment
+			e.Release = cfg.appVersion
 			sentry.CaptureEvent(e)
 		}
 
@@ -53,7 +60,7 @@ func InitSentryForZap(cfg Config, opts ...Option) (zap.Option, error) {
 //
 // By default, the timeout is 2 seconds
 func Flush(timeout time.Duration) bool {
-	if timeout == 0 {
+	if timeout < time.Second*2 {
 		timeout = 2 * time.Second
 	}
 
