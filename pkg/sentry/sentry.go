@@ -39,11 +39,10 @@ func InitSentryForZap(cfg Config, opts ...Option) (zap.Option, error) {
 			e := sentry.NewEvent()
 			e.Timestamp = entry.Time
 			e.Message = fmt.Sprintf(
-				"%s\n\n%s, Line No: %d :: stack:\n%s",
+				"%s\n\n%s, Line No: %d",
 				entry.Message,
 				entry.Caller.File,
 				entry.Caller.Line,
-				entry.Stack,
 			)
 			e.Level = sentry.Level(entry.Level.String())
 			e.Logger = entry.LoggerName
