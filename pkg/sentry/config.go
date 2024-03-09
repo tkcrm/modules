@@ -30,13 +30,13 @@ func (c *Config) Validate() error {
 	)
 }
 
-func (c *Config) WithSentryConfig(v sentry.ClientOptions) Option {
+func WithSentryConfig(v sentry.ClientOptions) Option {
 	return func(c *Config) {
 		c.sentryConfig = v
 	}
 }
 
-func (c *Config) WithAppVersion(appVersion string) Option {
+func WithAppVersion(appVersion string) Option {
 	return func(c *Config) {
 		c.appVersion = appVersion
 	}
