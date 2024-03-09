@@ -36,14 +36,21 @@ func InitSentryForZap(cfg Config, opts ...Option) (zap.Option, error) {
 
 	return zap.Hooks(func(entry zapcore.Entry) error {
 		if entry.Level >= zapcore.ErrorLevel {
+			var msg string
+			if entry.Caller.File != "" && entry.Caller.Line > 0 {
+				msg = fmt.Sprintf(
+					"%s\n\n%s, Line No: %d",
+					entry.Message,
+					entry.Caller.File,
+					entry.Caller.Line,
+				)
+			} else {
+				msg = entry.Message
+			}
+
 			e := sentry.NewEvent()
 			e.Timestamp = entry.Time
-			e.Message = fmt.Sprintf(
-				"%s\n\n%s, Line No: %d",
-				entry.Message,
-				entry.Caller.File,
-				entry.Caller.Line,
-			)
+			e.Message = msg
 			e.Level = sentry.Level(entry.Level.String())
 			e.Logger = entry.LoggerName
 			e.Environment = cfg.Environment
