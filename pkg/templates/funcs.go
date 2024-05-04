@@ -21,7 +21,7 @@ var DefaultTemplateFuncs = template.FuncMap{
 		return stringy.New(str).SnakeCase().ToLower()
 	},
 	"camelCase": func(str string) string {
-		return stringy.New(str).CamelCase()
+		return stringy.New(str).CamelCase().Get()
 	},
 	"lowerCaseFirstLetter": func(str string) string {
 		return stringy.New(str).LcFirst()
