@@ -1,7 +1,7 @@
 package limiter
 
 type Config struct {
-	CachePrefix string
+	CachePrefix string `yaml:"cache_prefix"`
 }
 
 func (c *Config) Validate() error {

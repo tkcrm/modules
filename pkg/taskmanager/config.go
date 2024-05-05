@@ -13,9 +13,9 @@ const (
 
 type Config struct {
 	Name         string
-	UniqueTasks  bool
-	RedisConfig  RedisConfig
-	ServerConfig ServerConfig
+	UniqueTasks  bool         `yaml:"unique_tasks"`
+	RedisConfig  RedisConfig  `yaml:"redis_config"`
+	ServerConfig ServerConfig `yaml:"server_config"`
 }
 
 type RedisConfig struct {
