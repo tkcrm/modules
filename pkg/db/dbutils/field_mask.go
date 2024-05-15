@@ -5,10 +5,6 @@ import "slices"
 type FieldMask[T ~string] []T
 
 func (s *FieldMask[T]) Add(items ...T) []T {
-	if s == nil {
-		*s = make([]T, 0)
-	}
-
 	if len(items) == 0 {
 		return *s
 	}
