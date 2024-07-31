@@ -5,14 +5,13 @@ import (
 	"fmt"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/tkcrm/modules/pkg/logger"
 )
 
 type Dragonfly struct {
 	Conn *redis.Client
 }
 
-func New(ctx context.Context, cfg Config, logger logger.Logger) (*Dragonfly, error) {
+func New(ctx context.Context, cfg Config, logger logger) (*Dragonfly, error) {
 	conn := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,
 		Username: cfg.User,

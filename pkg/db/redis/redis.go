@@ -5,14 +5,13 @@ import (
 	"fmt"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/tkcrm/modules/pkg/logger"
 )
 
 type Redis struct {
 	Conn *redis.Client
 }
 
-func New(ctx context.Context, cfg Config, logger logger.Logger) (*Redis, error) {
+func New(ctx context.Context, cfg Config, logger logger) (*Redis, error) {
 	conn := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,
 		Username: cfg.User,

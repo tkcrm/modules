@@ -4,7 +4,6 @@ import (
 	"database/sql"
 
 	"github.com/tkcrm/modules/pkg/db/dbutils"
-	"github.com/tkcrm/modules/pkg/logger"
 
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
@@ -17,7 +16,7 @@ type BunConn struct {
 	bun.IDB
 }
 
-func New(logger logger.Logger, cfg Config) (*BunConn, error) {
+func New(logger logger, cfg Config) (*BunConn, error) {
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(
 		dbutils.PostgresDSN(cfg.Addr, cfg.User, cfg.Password, cfg.DBName),
 	)))

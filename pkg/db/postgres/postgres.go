@@ -5,14 +5,13 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tkcrm/modules/pkg/db/dbutils"
-	"github.com/tkcrm/modules/pkg/logger"
 )
 
 type PostgreSQL struct {
 	DB *pgxpool.Pool
 }
 
-func New(ctx context.Context, cfg Config, logger logger.Logger) (*PostgreSQL, error) {
+func New(ctx context.Context, cfg Config, logger logger) (*PostgreSQL, error) {
 	config, err := pgxpool.ParseConfig(
 		dbutils.PostgresDSN(cfg.Addr, cfg.User, cfg.Password, cfg.DBName),
 	)
