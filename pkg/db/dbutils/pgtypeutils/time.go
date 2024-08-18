@@ -9,7 +9,7 @@ import (
 func EncodeTime(value time.Time) pgtype.Timestamp {
 	return pgtype.Timestamp{
 		Time:  value,
-		Valid: value != time.Time{},
+		Valid: !value.IsZero(),
 	}
 }
 
