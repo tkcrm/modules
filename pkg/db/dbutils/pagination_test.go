@@ -11,34 +11,34 @@ import (
 
 func Test_Pagination(t *testing.T) {
 	tests := []struct {
-		page           *uint64
-		pageSize       *uint64
-		expectedLimit  uint64
-		expectedOffset uint64
+		page           *uint32
+		pageSize       *uint32
+		expectedLimit  uint32
+		expectedOffset uint32
 		opts           []dbutils.PaginationOption
 	}{
 		{
-			page:           utils.Pointer(uint64(1)),
-			pageSize:       utils.Pointer(uint64(1)),
+			page:           utils.Pointer(uint32(1)),
+			pageSize:       utils.Pointer(uint32(1)),
 			expectedLimit:  1,
 			expectedOffset: 0,
 		},
 		{
-			page:           utils.Pointer(uint64(0)),
-			pageSize:       utils.Pointer(uint64(10)),
+			page:           utils.Pointer(uint32(0)),
+			pageSize:       utils.Pointer(uint32(10)),
 			expectedLimit:  10,
 			expectedOffset: 0,
 		},
 		{
-			page:           utils.Pointer(uint64(1)),
-			pageSize:       utils.Pointer(uint64(1000)),
+			page:           utils.Pointer(uint32(1)),
+			pageSize:       utils.Pointer(uint32(1000)),
 			expectedLimit:  1000,
 			expectedOffset: 0,
 			opts:           []dbutils.PaginationOption{dbutils.WithMaxLimit(1000)},
 		},
 		{
-			page:           utils.Pointer(uint64(2)),
-			pageSize:       utils.Pointer(uint64(1000)),
+			page:           utils.Pointer(uint32(2)),
+			pageSize:       utils.Pointer(uint32(1000)),
 			expectedLimit:  1000,
 			expectedOffset: 1000,
 			opts:           []dbutils.PaginationOption{dbutils.WithMaxLimit(1000)},
