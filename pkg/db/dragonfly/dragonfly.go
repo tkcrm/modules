@@ -9,6 +9,7 @@ import (
 
 type Dragonfly struct {
 	Conn *redis.Client
+	cfg  Config
 }
 
 func New(ctx context.Context, cfg Config, logger logger) (*Dragonfly, error) {
@@ -25,5 +26,5 @@ func New(ctx context.Context, cfg Config, logger logger) (*Dragonfly, error) {
 
 	logger.Info("successfully connected to dragonfly")
 
-	return &Dragonfly{conn}, nil
+	return &Dragonfly{conn, cfg}, nil
 }

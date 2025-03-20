@@ -13,3 +13,8 @@ func (s *Redis) Stop(_ context.Context) error {
 func (s *Redis) Ping(ctx context.Context) error {
 	return s.Conn.Ping(ctx).Err()
 }
+
+// Enabled returns true if the database is enabled
+func (s *Redis) Enabled() bool {
+	return s.cfg.Enabled
+}

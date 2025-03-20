@@ -8,8 +8,8 @@ import (
 )
 
 type TDEngine struct {
-	config Config
-	DB     *sql.DB
+	DB  *sql.DB
+	cfg Config
 }
 
 func New(logger logger, cfg Config) (*TDEngine, error) {
@@ -29,5 +29,5 @@ func New(logger logger, cfg Config) (*TDEngine, error) {
 
 	logger.Info("successfully connected to tdengine")
 
-	return &TDEngine{cfg, db}, nil
+	return &TDEngine{db, cfg}, nil
 }

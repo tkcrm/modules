@@ -1,6 +1,7 @@
 package tdengine
 
 type Config struct {
+	Enabled  bool   `yaml:"enabled" validate:"required,boolean" default:"true"`
 	Addr     string `validate:"required,hostname_port" example:"localhost:6030"`
 	User     string `validate:"required" secret:"true"`
 	Password string `validate:"required" secret:"true"`

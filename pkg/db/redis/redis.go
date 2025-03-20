@@ -9,6 +9,7 @@ import (
 
 type Redis struct {
 	Conn *redis.Client
+	cfg  Config
 }
 
 func New(ctx context.Context, cfg Config, logger logger) (*Redis, error) {
@@ -25,5 +26,5 @@ func New(ctx context.Context, cfg Config, logger logger) (*Redis, error) {
 
 	logger.Info("successfully connected to redis")
 
-	return &Redis{conn}, nil
+	return &Redis{conn, cfg}, nil
 }
