@@ -13,6 +13,14 @@ type PostgreSQL struct {
 }
 
 func New(ctx context.Context, cfg Config, logger logger) (*PostgreSQL, error) {
+	instance := &PostgreSQL{
+		cfg: cfg,
+	}
+
+	if !cfg.Enabled {
+		return instance, nil
+	}
+
 	config, err := pgxpool.ParseConfig(
 		dbutils.PostgresDSN(cfg.Addr, cfg.User, cfg.Password, cfg.DBName),
 	)
@@ -31,5 +39,7 @@ func New(ctx context.Context, cfg Config, logger logger) (*PostgreSQL, error) {
 
 	logger.Info("successfully connected to postgres")
 
-	return &PostgreSQL{pool, cfg}, nil
+	instance.DB = pool
+
+	return instance, nil
 }

@@ -8,12 +8,19 @@ import (
 )
 
 type Nats struct {
-	ConnType ConnType
-	Conn     *nats.Conn
-	cfg      Config
+	Conn *nats.Conn
+	cfg  Config
 }
 
 func New(logger logger.Logger, config Config, appName string, opts ...nats.Option) (*Nats, error) {
+	instance := &Nats{
+		cfg: config,
+	}
+
+	if !config.Enabled {
+		return instance, nil
+	}
+
 	if opts == nil {
 		opts = make([]nats.Option, 0)
 	}
@@ -46,9 +53,7 @@ func New(logger logger.Logger, config Config, appName string, opts ...nats.Optio
 		return nil, fmt.Errorf("failed to connect to nats: %w", err)
 	}
 
-	return &Nats{
-		ConnType: ConnTypeDefault,
-		Conn:     nc,
-		cfg:      config,
-	}, nil
+	instance.Conn = nc
+
+	return instance, nil
 }

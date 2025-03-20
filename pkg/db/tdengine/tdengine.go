@@ -13,6 +13,14 @@ type TDEngine struct {
 }
 
 func New(logger logger, cfg Config) (*TDEngine, error) {
+	instance := &TDEngine{
+		cfg: cfg,
+	}
+
+	if !cfg.Enabled {
+		return instance, nil
+	}
+
 	db, err := sql.Open("taosSql",
 		fmt.Sprintf(
 			"%s:%s@tcp(%s)/%s",
@@ -29,5 +37,7 @@ func New(logger logger, cfg Config) (*TDEngine, error) {
 
 	logger.Info("successfully connected to tdengine")
 
-	return &TDEngine{db, cfg}, nil
+	instance.DB = db
+
+	return instance, nil
 }
