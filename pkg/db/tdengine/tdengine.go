@@ -8,11 +8,19 @@ import (
 )
 
 type TDEngine struct {
-	config Config
-	DB     *sql.DB
+	DB  *sql.DB
+	cfg Config
 }
 
 func New(logger logger, cfg Config) (*TDEngine, error) {
+	instance := &TDEngine{
+		cfg: cfg,
+	}
+
+	if !cfg.Enabled {
+		return instance, nil
+	}
+
 	db, err := sql.Open("taosSql",
 		fmt.Sprintf(
 			"%s:%s@tcp(%s)/%s",
@@ -29,5 +37,7 @@ func New(logger logger, cfg Config) (*TDEngine, error) {
 
 	logger.Info("successfully connected to tdengine")
 
-	return &TDEngine{cfg, db}, nil
+	instance.DB = db
+
+	return instance, nil
 }

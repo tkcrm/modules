@@ -14,3 +14,8 @@ func (s *PostgreSQL) Stop(_ context.Context) error {
 func (s *PostgreSQL) Ping(ctx context.Context) error {
 	return s.DB.Ping(ctx)
 }
+
+// Enabled returns true if the database is enabled
+func (s *PostgreSQL) Enabled() bool {
+	return s.cfg.Enabled
+}

@@ -13,3 +13,8 @@ func (s *TDEngine) Stop(_ context.Context) error {
 func (s *TDEngine) Ping(_ context.Context) error {
 	return s.DB.Ping()
 }
+
+// Enabled returns true if the database is enabled
+func (s *TDEngine) Enabled() bool {
+	return s.cfg.Enabled
+}

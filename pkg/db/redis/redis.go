@@ -9,9 +9,18 @@ import (
 
 type Redis struct {
 	Conn *redis.Client
+	cfg  Config
 }
 
 func New(ctx context.Context, cfg Config, logger logger) (*Redis, error) {
+	instance := &Redis{
+		cfg: cfg,
+	}
+
+	if !cfg.Enabled {
+		return instance, nil
+	}
+
 	conn := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,
 		Username: cfg.User,
@@ -25,5 +34,7 @@ func New(ctx context.Context, cfg Config, logger logger) (*Redis, error) {
 
 	logger.Info("successfully connected to redis")
 
-	return &Redis{conn}, nil
+	instance.Conn = conn
+
+	return instance, nil
 }

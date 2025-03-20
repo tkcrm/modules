@@ -1,11 +1,51 @@
 package postgres
 
+import "errors"
+
 type Config struct {
-	Addr         string `validate:"required,hostname_port" example:"localhost:5432"`
-	User         string `validate:"required" secret:"true"`
-	Password     string `validate:"required" secret:"true"`
-	DBName       string `yaml:"db_name" validate:"required" env:"DB_NAME"`
-	PingInterval int    `yaml:"ping_interval" validate:"required,gt=0" default:"10"`
-	MinConns     int32  `yaml:"min_conns" validate:"required,gt=0" default:"3"`
-	MaxConns     int32  `yaml:"max_conns" validate:"required,gt=0" default:"6"`
+	Enabled      bool   `yaml:"enabled" default:"true"`
+	Addr         string `example:"localhost:5432"`
+	User         string `secret:"true"`
+	Password     string `secret:"true"`
+	DBName       string `yaml:"db_name" env:"DB_NAME"`
+	PingInterval int    `yaml:"ping_interval" validate:"gt=0" default:"10"`
+	MinConns     int32  `yaml:"min_conns" validate:"gt=0" default:"3"`
+	MaxConns     int32  `yaml:"max_conns" validate:"gt=0" default:"6"`
+}
+
+// Validate validates the config
+func (c *Config) Validate() error {
+	if !c.Enabled {
+		return nil
+	}
+
+	if c.Addr == "" {
+		return errors.New("addr is required")
+	}
+
+	if c.User == "" {
+		return errors.New("user is required")
+	}
+
+	if c.Password == "" {
+		return errors.New("password is required")
+	}
+
+	if c.DBName == "" {
+		return errors.New("db_name is required")
+	}
+
+	if c.PingInterval < 0 {
+		return errors.New("ping_interval must be greater than 0")
+	}
+
+	if c.MinConns <= 0 {
+		return errors.New("min_conns must be greater than 0")
+	}
+
+	if c.MaxConns <= 0 {
+		return errors.New("max_conns must be greater than 0")
+	}
+
+	return nil
 }

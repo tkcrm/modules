@@ -8,12 +8,19 @@ import (
 )
 
 type Nats struct {
-	ConnType    ConnType
-	Conn        *nats.Conn
-	EncodedConn *nats.EncodedConn
+	Conn *nats.Conn
+	cfg  Config
 }
 
 func New(logger logger.Logger, config Config, appName string, opts ...nats.Option) (*Nats, error) {
+	instance := &Nats{
+		cfg: config,
+	}
+
+	if !config.Enabled {
+		return instance, nil
+	}
+
 	if opts == nil {
 		opts = make([]nats.Option, 0)
 	}
@@ -46,27 +53,7 @@ func New(logger logger.Logger, config Config, appName string, opts ...nats.Optio
 		return nil, fmt.Errorf("failed to connect to nats: %w", err)
 	}
 
-	return &Nats{
-		ConnType: ConnTypeDefault,
-		Conn:     nc,
-	}, nil
-}
+	instance.Conn = nc
 
-func NewEncoded(logger logger.Logger, config Config, appName string, encType NatsEncodeType, opts ...nats.Option) (*Nats, error) {
-	if encType == "" {
-		return nil, fmt.Errorf("empty encode type")
-	}
-
-	nc, err := New(logger, config, appName, opts...)
-	if err != nil {
-		return nil, err
-	}
-
-	nc.ConnType = ConnTypeEncoded
-	nc.EncodedConn, err = nats.NewEncodedConn(nc.Conn, string(encType))
-	if err != nil {
-		return nil, err
-	}
-
-	return nc, nil
+	return instance, nil
 }
