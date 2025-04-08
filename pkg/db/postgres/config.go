@@ -7,7 +7,7 @@ type Config struct {
 	Addr         string `example:"localhost:5432"`
 	User         string `secret:"true"`
 	Password     string `secret:"true"`
-	DBName       string `yaml:"db_name" env:"DB_NAME"`
+	DbName       string `yaml:"db_name"`
 	PingInterval int    `yaml:"ping_interval" validate:"gt=0" default:"10"`
 	MinConns     int32  `yaml:"min_conns" validate:"gt=0" default:"3"`
 	MaxConns     int32  `yaml:"max_conns" validate:"gt=0" default:"6"`
@@ -31,7 +31,7 @@ func (c *Config) Validate() error {
 		return errors.New("password is required")
 	}
 
-	if c.DBName == "" {
+	if c.DbName == "" {
 		return errors.New("db_name is required")
 	}
 
