@@ -22,7 +22,7 @@ func New(ctx context.Context, cfg Config, logger logger) (*PostgreSQL, error) {
 	}
 
 	config, err := pgxpool.ParseConfig(
-		dbutils.PostgresDSN(cfg.Addr, cfg.User, cfg.Password, cfg.DBName),
+		dbutils.PostgresDSN(cfg.Addr, cfg.User, cfg.Password, cfg.DbName),
 	)
 	if err != nil {
 		return nil, err
