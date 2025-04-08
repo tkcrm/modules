@@ -67,7 +67,7 @@ require (
 	github.com/nats-io/nkeys v0.4.10 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/prometheus/client_golang v1.21.1
-	github.com/taosdata/driver-go/v3 v3.6.0
+	github.com/taosdata/driver-go/v3 v3.5.8
 	github.com/ulule/limiter/v3 v3.11.2
 	github.com/uptrace/bun/dialect/pgdialect v1.2.11
 	github.com/uptrace/bun/driver/pgdriver v1.2.11
