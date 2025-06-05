@@ -50,8 +50,8 @@ func (p *PostgreSQL) CheckConnection(ctx context.Context, logger logger) error {
 	}
 
 	return retry.New(
-		retry.WithDelay(time.Second*2),
-		retry.WithMaxAttempts(5),
+		retry.WithDelay(time.Second*3),
+		retry.WithMaxAttempts(10),
 		retry.WithPolicy(retry.PolicyLinear),
 		retry.WithLogger(logger),
 		retry.WithContext(ctx),
