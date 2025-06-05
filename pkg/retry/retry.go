@@ -10,10 +10,12 @@ import (
 // Retry represents a retry mechanism
 type Retry struct {
 	ctx         context.Context
+	logger      logger
 	maxAttempts int
 	policy      Policy
 	delay       time.Duration
-	debug       bool
+	onFailedFn  func()
+	onSuccessFn func()
 }
 
 // New creates a new Retry instance
@@ -37,16 +39,27 @@ func New(opts ...Option) *Retry {
 
 // Do - performs the retry mechanism
 func (r *Retry) Do(fn func() error) error {
+	if fn == nil {
+		return fmt.Errorf("retry function cannot be nil")
+	}
+
+	var err error
 	switch r.policy {
 	case PolicyLinear:
-		return r.linearRetry(fn)
+		err = r.linearRetry(fn)
 	case PolicyBackoff:
-		return r.backoffRetry(fn)
+		err = r.backoffRetry(fn)
 	case PolicyInfinite:
-		return r.infiniteRetry(fn)
+		err = r.infiniteRetry(fn)
 	default:
-		return fmt.Errorf("unsupported retry policy")
+		err = fmt.Errorf("unsupported retry policy")
 	}
+
+	if err == nil && r.onSuccessFn != nil {
+		r.onSuccessFn()
+	}
+
+	return err
 }
 
 // linearRetry - performs a linear retry mechanism
@@ -57,13 +70,17 @@ func (r *Retry) linearRetry(fn func() error) error {
 			return nil
 		}
 
+		if r.onFailedFn != nil {
+			r.onFailedFn()
+		}
+
 		if errors.Is(err, ErrExit) {
 			return err
 		}
 
 		if attempt < r.maxAttempts {
-			if r.debug {
-				fmt.Printf("linear Retry attempt %d failed, retrying in %s...\n", attempt, r.delay)
+			if r.logger != nil {
+				r.logger.Infof("linear retry attempt %d failed, retrying in %s...", attempt, r.delay)
 			}
 			time.Sleep(r.delay)
 		}
@@ -79,14 +96,18 @@ func (r *Retry) backoffRetry(fn func() error) error {
 			return nil
 		}
 
+		if r.onFailedFn != nil {
+			r.onFailedFn()
+		}
+
 		if errors.Is(err, ErrExit) {
 			return err
 		}
 
 		if attempt < r.maxAttempts {
 			delay := r.delay * (1 << (attempt - 1)) // Увеличение задержки в 2 раза на каждую попытку
-			if r.debug {
-				fmt.Printf("backoff Retry attempt %d failed, retrying in %s...\n", attempt, delay)
+			if r.logger != nil {
+				r.logger.Infof("backoff retry attempt %d failed, retrying in %s...", attempt, delay)
 			}
 			time.Sleep(delay)
 		}
@@ -112,13 +133,17 @@ func (r *Retry) infiniteRetry(fn func() error) error {
 					return
 				}
 
+				if r.onFailedFn != nil {
+					r.onFailedFn()
+				}
+
 				if errors.Is(err, ErrExit) {
 					resCh <- err
 					return
 				}
 
-				if r.debug {
-					fmt.Printf("initnite retry attempt\n")
+				if r.logger != nil {
+					r.logger.Infof("infinite retry attempt failed, retrying in %s...", r.delay)
 				}
 				time.Sleep(r.delay)
 			}

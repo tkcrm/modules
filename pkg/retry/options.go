@@ -7,6 +7,13 @@ import (
 
 type Option func(*Retry)
 
+// WithLogger sets the logger for the Retry instance
+func WithLogger(logger logger) Option {
+	return func(r *Retry) {
+		r.logger = logger
+	}
+}
+
 // WithMaxAttempts sets the maximum number of attempts
 func WithMaxAttempts(maxAttempts int) Option {
 	return func(r *Retry) {
@@ -28,18 +35,31 @@ func WithDelay(delay time.Duration) Option {
 	}
 }
 
-// WithDebug sets the debug mode
-func WithDebug(debug bool) Option {
-	return func(r *Retry) {
-		r.debug = debug
-	}
-}
-
 // WithContext sets the ctx for Infinite policy retry
 func WithContext(ctx context.Context) Option {
 	return func(r *Retry) {
 		r.ctx = ctx
 	}
+}
+
+// WithOnFailedFn sets the function to be called on failure
+func WithOnFailedFn(fn func()) Option {
+	return func(r *Retry) {
+		r.onFailedFn = fn
+	}
+}
+
+// WithOnSuccessFn sets the function to be called on success
+func WithOnSuccessFn(fn func()) Option {
+	return func(r *Retry) {
+		r.onSuccessFn = fn
+	}
+}
+
+// SetLogger sets the logger for the Retry instance
+func (r *Retry) SetLogger(logger logger) *Retry {
+	r.logger = logger
+	return r
 }
 
 // SetMaxAttempts sets the maximum number of attempts
@@ -60,8 +80,20 @@ func (r *Retry) SetDelay(delay time.Duration) *Retry {
 	return r
 }
 
-// SetDebug sets the debug mode
-func (r *Retry) SetDebug(debug bool) *Retry {
-	r.debug = debug
+// SetContext sets the ctx for Infinite policy retry
+func (r *Retry) SetContext(ctx context.Context) *Retry {
+	r.ctx = ctx
+	return r
+}
+
+// SetOnFailedFn sets the function to be called on failure
+func (r *Retry) SetOnFailedFn(fn func()) *Retry {
+	r.onFailedFn = fn
+	return r
+}
+
+// SetOnSuccessFn sets the function to be called on success
+func (r *Retry) SetOnSuccessFn(fn func()) *Retry {
+	r.onSuccessFn = fn
 	return r
 }

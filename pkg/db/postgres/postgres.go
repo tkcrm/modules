@@ -44,12 +44,18 @@ func New(ctx context.Context, cfg Config) (*PostgreSQL, error) {
 // CheckConnection checks if the PostgreSQL connection pool is initialized and attempts to ping the database.
 // It retries the ping operation up to 5 times with a 2-second delay between attempts.
 // If the connection pool is not initialized, it returns an error.
-func (p *PostgreSQL) CheckConnection(ctx context.Context) error {
+func (p *PostgreSQL) CheckConnection(ctx context.Context, logger logger) error {
 	if p.DB == nil {
 		return fmt.Errorf("PostgreSQL connection pool is not initialized")
 	}
 
-	return retry.New(retry.WithDelay(time.Second*2), retry.WithMaxAttempts(5)).Do(func() error {
+	return retry.New(
+		retry.WithDelay(time.Second*2),
+		retry.WithMaxAttempts(5),
+		retry.WithPolicy(retry.PolicyLinear),
+		retry.WithLogger(logger),
+		retry.WithContext(ctx),
+	).Do(func() error {
 		return p.DB.Ping(ctx)
 	})
 }
