@@ -2,9 +2,12 @@ package postgres
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/tkcrm/modules/pkg/db/dbutils"
+	"github.com/tkcrm/modules/pkg/retry"
 )
 
 type PostgreSQL struct {
@@ -12,7 +15,7 @@ type PostgreSQL struct {
 	cfg Config
 }
 
-func New(ctx context.Context, cfg Config, logger logger) (*PostgreSQL, error) {
+func New(ctx context.Context, cfg Config) (*PostgreSQL, error) {
 	instance := &PostgreSQL{
 		cfg: cfg,
 	}
@@ -33,13 +36,20 @@ func New(ctx context.Context, cfg Config, logger logger) (*PostgreSQL, error) {
 		return nil, err
 	}
 
-	if err := pool.Ping(ctx); err != nil {
-		return nil, err
-	}
-
-	logger.Info("successfully connected to postgres")
-
 	instance.DB = pool
 
 	return instance, nil
+}
+
+// CheckConnection checks if the PostgreSQL connection pool is initialized and attempts to ping the database.
+// It retries the ping operation up to 5 times with a 2-second delay between attempts.
+// If the connection pool is not initialized, it returns an error.
+func (p *PostgreSQL) CheckConnection(ctx context.Context) error {
+	if p.DB == nil {
+		return fmt.Errorf("PostgreSQL connection pool is not initialized")
+	}
+
+	return retry.New(retry.WithDelay(time.Second*2), retry.WithMaxAttempts(5)).Do(func() error {
+		return p.DB.Ping(ctx)
+	})
 }
